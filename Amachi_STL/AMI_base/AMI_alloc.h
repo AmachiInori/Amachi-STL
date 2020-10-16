@@ -34,7 +34,7 @@ inline void _destroy(__input_iterator begin, __input_iterator end) {
 inline void _destroy(char*, char*) {}
 inline void _destroy(wchar_t*, wchar_t*) {}
 
-
+/****************************************/
 
 class __primary_allocator {
     static void * out_of_memory_malloc(_AMI_size_t __size) {
@@ -85,7 +85,7 @@ public:
 };
 void (*__primary_allocator::out_of_memory_handler)() = 0;
 
-
+/****************************************/
 
 class __secondary_allocator {
     union list_node {
@@ -99,17 +99,72 @@ class __secondary_allocator {
 
     static _AMI_size_t __round (_AMI_size_t n) { return (n + unit - 1) & ~(unit - 1); }
     static _AMI_size_t __find_list_loca (_AMI_size_t __size) {
-        return __size / unit; //.
+        return __size / unit;
     } 
     static union list_node* volatile __main_table[chain_number];
 
     static char *__memory_pool_start;
     static char *__memory_pool_end;
+    static _AMI_size_t __used_heap_size;
     static char *__pool_alloc(_AMI_size_t __size, _AMI_size_t &__got_node_number) {
-        
+        _AMI_size_t remain_size = __memory_pool_end - __memory_pool_start;
+        _AMI_size_t ask_size = __got_node_number * __size;
+        char *result;
+        if (remain_size >= ask_size) {
+            result = __memory_pool_start;
+            __memory_pool_start += ask_size;
+            return result;
+        } else if (remain_size >= __size) {
+            __got_node_number = remain_size / __size;
+            ask_size = __got_node_number * __size;
+            result = __memory_pool_start;
+            __memory_pool_start += ask_size;
+            return result;
+        } else {
+            _AMI_size_t __bytes_to_new = 2 * ask_size + __round(__used_heap_size >> 4);
+            if (remain_size > 0) {
+                union list_node* volatile *target = __main_table + __find_list_loca(__size);
+                union list_node* new_node = (union list_node*)__memory_pool_start;
+                new_node->next = *target;
+                *target = new_node;
+                __memory_pool_start += remain_size;
+            }
+            __memory_pool_start = (char*)malloc(__bytes_to_new);
+            if (__memory_pool_start == 0) {
+                union list_node* volatile *target;
+                for (size_t i = __size; i <= max_bytes; i += unit) {
+                    if (__main_table[__find_list_loca(__size)] != 0) {
+                        target = __main_table + __find_list_loca(__size);
+                        __memory_pool_start = (char*)*target;
+                        __memory_pool_end = ((char*)*target + i);
+                        __main_table[__find_list_loca(__size)] = __main_table[__find_list_loca(__size)]->next;
+                        return __pool_alloc(__size, __bytes_to_new);
+                    }
+                }
+                __memory_pool_end = 0;
+                __memory_pool_start = (char*)__primary_allocator::allocate(__bytes_to_new);
+            }
+            __used_heap_size += __got_node_number * __size;
+            __memory_pool_end = __memory_pool_start + __size;
+            return __pool_alloc(__size, __bytes_to_new);
+        }
     }
     static void *__refill(_AMI_size_t __size) {
-
+        _AMI_size_t __got_nodes = 32;
+        char *newChainHead =  __pool_alloc(__size, __got_nodes);
+        if (__got_nodes == 1) return newChainHead;
+        union list_node* volatile *target = __main_table + __find_list_loca(__size);
+        void *result = newChainHead;
+        for (size_t i = 1; i < __got_nodes; i++) {
+            union list_node* currentNode = (union list_node*)(newChainHead + i * __size);
+            if (i == 1) {
+                currentNode->next = 0;
+            } else {
+                currentNode->next = (union list_node*)(newChainHead + (i - 1) * __size);
+            }
+        }
+        __main_table[__find_list_loca(__size)] = (union list_node*)(newChainHead + (__got_nodes - 1) * __size);
+        return result;
     }
 public:
     static void * allocate(_AMI_size_t __size) {
@@ -121,6 +176,7 @@ public:
             return res;
         }
         *target = tempPtC->next;
+        return tempPtC;
     }
     static void deallocate(void *__pointer, _AMI_size_t __size) {
         if (__size > max_bytes) {
@@ -134,45 +190,12 @@ public:
 };
 char *__secondary_allocator::__memory_pool_start = 0;
 char *__secondary_allocator::__memory_pool_end = 0;
+_AMI_size_t __secondary_allocator::__used_heap_size = 0;
 typename __secondary_allocator::list_node * volatile
-__secondary_allocator::__main_table[chain_number] = 
-{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+__secondary_allocator::__main_table[chain_number] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+/****************************************/
 
 
-template<class __value_type, class allocator = __primary_allocator> 
-class base_allocator {
-public:
-    typedef __value_type            value_type;
-    typedef __value_type*           pointer;
-    typedef const __value_type*     const_pointer;
-    typedef __value_type&           reference;
-    typedef const __value_type&     const_reference;
-    typedef _AMI_size_t             size_type;
-    typedef _AMI_ptrdiff_t          difference_type;
-
-    size_type max_size() const { return UINT_MAX / size_type(sizeof(value_type)); }
-    pointer address(reference n) const { return &n; };
-    const_pointer address(const_reference n) const { return &n; };
-    static void construct(pointer target, const_reference val) {
-        _construct<value_type, value_type>(target, val);
-    }
-    static void destroy(pointer __pointer) {
-        _destroy(__pointer);
-    }
-    static pointer allocate(size_type length) {
-        return length == 0 ? 0 : (__value_type*)allocator::allocate(sizeof(value_type) * length);
-    }
-    static pointer allocate() {
-        return (__value_type*)allocator::allocate(sizeof(value_type));
-    }
-    static void deallocate(pointer __pointer, size_type length) {
-        if (length != 0) {
-            allocator::deallocate(__pointer, length);
-        }
-    }
-    static void deallocate(pointer pointer) {
-        allocator::deallocate(pointer, sizeof(value_type));
-    }
-};
 
 __ASTL_NAMESPACE_END 

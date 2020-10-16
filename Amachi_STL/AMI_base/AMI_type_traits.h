@@ -18,6 +18,8 @@ public:
     typedef __false is_POD_type;
 };
 
+/****************************************/
+
 __EXPLICIT_SPEC_HEAD
 class __type_traits<bool> {
 public:
