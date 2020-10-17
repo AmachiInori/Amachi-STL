@@ -2,46 +2,15 @@
 # include <stdlib.h>
 # include "AMI_type_traits.h"
 # include "AMI_iterator.h"
-# include "AMI_stlconfig.h"
 
 __ASTL_NAMESPACE_START
-
-template <class targetType, class valueType>
-inline void _construct(targetType* target, const valueType &val) {
-    new (target) targetType(val);
-}
-
-template <class __targetType>
-inline void __destroy_single(__targetType *target, __true) {}
-
-template <class __targetType>
-inline void __destroy_single(__targetType *target, __false) {
-    target->~__targetType();
-}
-
-template <class __targetType>
-inline void _destroy(__targetType *target) {
-    typedef typename __type_traits<__targetType>::has_trival_default_dtor trival;
-    __destroy_single(&*target, trival());
-}
-
-template <class __input_iterator>
-inline void _destroy(__input_iterator begin, __input_iterator end) {
-    for (; begin != end; begin++) 
-        __destroy(&*begin);
-}
-
-inline void _destroy(char*, char*) {}
-inline void _destroy(wchar_t*, wchar_t*) {}
-
-/****************************************/
 
 class __primary_allocator {
     static void * out_of_memory_malloc(_AMI_size_t __size) {
         void (*handler)() = out_of_memory_handler;
-        void *tempPtV;
         for (;;) {
-            if (0 == handler) __THROW_BAD_ALLOC;
+            void *tempPtV;
+            if (handler == 0) __THROW_BAD_ALLOC;
             handler();
             tempPtV = malloc(__size);
             if (tempPtV != nullptr) return tempPtV;
@@ -51,7 +20,7 @@ class __primary_allocator {
         void (*handler)() = out_of_memory_handler;
         void *tempPtV;
         for (;;) {
-            if (0 == handler) __THROW_BAD_ALLOC;
+            if (handler == 0) __THROW_BAD_ALLOC;
             handler();
             tempPtV = realloc(__pointer, __size);
             if (tempPtV != nullptr) return tempPtV;
@@ -153,7 +122,6 @@ class __secondary_allocator {
         _AMI_size_t __got_nodes = 32;
         char *newChainHead =  __pool_alloc(__size, __got_nodes);
         if (__got_nodes == 1) return newChainHead;
-        union list_node* volatile *target = __main_table + __find_list_loca(__size);
         void *result = newChainHead;
         for (size_t i = 1; i < __got_nodes; i++) {
             union list_node* currentNode = (union list_node*)(newChainHead + i * __size);
@@ -193,9 +161,5 @@ char *__secondary_allocator::__memory_pool_end = 0;
 _AMI_size_t __secondary_allocator::__used_heap_size = 0;
 typename __secondary_allocator::list_node * volatile
 __secondary_allocator::__main_table[chain_number] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-/****************************************/
-
-
 
 __ASTL_NAMESPACE_END 

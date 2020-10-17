@@ -1,5 +1,7 @@
 # pragma once
 # include "AMI_base/AMI_alloc.h"
+# include "AMI_base/AMI_uninit.h"
+# include "AMI_base/AMI_construct.h"
 
 __ASTL_NAMESPACE_START
 
@@ -38,7 +40,5 @@ public:
         allocator::deallocate(pointer, sizeof(value_type));
     }
 };
-
-
 
 __ASTL_NAMESPACE_END 

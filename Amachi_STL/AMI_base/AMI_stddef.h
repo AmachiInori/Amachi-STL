@@ -1,5 +1,6 @@
 # pragma once
 # include <limits.h>
+# include "AMI_stlconfig.h"
 # ifndef INT_MAX
 #   define INT_MAX 0xffff
 # endif
