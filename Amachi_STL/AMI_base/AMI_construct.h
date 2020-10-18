@@ -26,7 +26,7 @@ inline void _destroy(__targetType *target) {
 template <class __input_iterator>
 inline void _destroy(__input_iterator begin, __input_iterator end) {
     for (; begin != end; begin++) 
-        __destroy(&*begin);
+        _destroy(&*begin);
 }
 
 inline void _destroy(char*, char*) {}
@@ -34,12 +34,17 @@ inline void _destroy(wchar_t*, wchar_t*) {}
 
 template <class targetType, class valueType>
 inline void construct(targetType* target, const valueType &val) {
-    _construct<value_type, value_type>(target, val);
+    _construct(target, val);
 }
 
 template <class targetType>
-inline void destroy(targetType* __pointer) {
-    _destroy(__pointer);
+inline void destroy(targetType* pointer) {
+    _destroy(pointer);
+}
+
+template <class targetType>
+inline void destroy(targetType* begin, targetType* end) {
+    _destroy(begin, end);
 }
 
 __ASTL_NAMESPACE_END

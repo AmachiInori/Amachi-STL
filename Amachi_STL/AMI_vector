@@ -1,0 +1,130 @@
+# pragma once
+# include "AMI_allocate"
+
+__ASTL_NAMESPACE_START
+
+template <class T, class alloc = __secondary_allocator> 
+class vector {
+public:
+    typedef T               value_type;
+    typedef T*              pointer;
+    typedef T*              iterator;
+    typedef T&              reference;
+    typedef _AMI_size_t     size_type;
+    typedef _AMI_ptrdiff_t  difference_type;
+
+protected:
+    typedef base_allocator<T, alloc>  __vector_alloc;
+
+    iterator __map_begin = 0;
+    iterator __map_end = 0;
+    iterator __storage_end = 0;
+    
+    iterator __alloc_and_init(size_type length, reference value) {
+        iterator res = __vector_alloc::allocate(length);
+        uninitialized_fill_n(res, length, value);
+        return res;
+    }
+    iterator __alloc_and_copy(iterator begin, iterator end) {
+        iterator res = __vector_alloc::allocate(end - begin);
+        uninitialized_copy(begin, end, res);
+        return res;
+    }
+    void __destroy_unit() {
+        destroy(__map_begin, __map_end);
+        __map_end = __map_begin;
+    }
+    void __dealloc() {
+        if (__map_begin) {
+            __vector_alloc::deallocate(__map_begin, this->size());
+        }
+        __map_begin = 0;
+        __map_end = 0;
+        __storage_end = 0;
+    }
+    void __enlarge() {
+        size_type old_size = size();
+        size_type used_length = size_type(__map_end - __map_begin);
+        size_type new_size = old_size == 0 ? 1 : old_size * 2;
+        iterator new_begin = __vector_alloc::allocate(new_size);
+        uninitialized_copy(__map_begin, __map_end, new_begin);
+        __destroy_unit();
+        __dealloc();
+        __map_begin = new_begin;
+        __map_end = __map_begin + used_length;
+        __storage_end = __map_begin + new_size;
+    }
+    void __shrink() {
+        size_type used_length = size_type(__map_end - __map_begin);
+        size_type new_size = size() / 2;
+        iterator new_begin = __vector_alloc::allocate(new_size);
+        uninitialized_copy(__map_begin, __map_end, new_begin);
+        __destroy_unit();
+        __dealloc();
+        __map_begin = new_begin;
+        __map_end = __map_begin + used_length;
+        __storage_end = __map_begin + new_size;
+    }
+public:
+    vector() = default;
+    explicit vector(size_type length) {
+        __map_begin = __alloc_and_init(length, size_type());
+        __map_end = __storage_end = __map_begin + length;
+    }
+    vector (size_type length, const reference value) {
+        __map_begin = __alloc_and_init(length, value);
+        __map_end = __storage_end = __map_begin + length;
+    }
+    vector (int length, const reference value) {
+        __map_begin = __alloc_and_init(size_type(length), value);
+        __map_end = __storage_end = __map_begin + length;
+    }
+    vector (long length, const reference value) {
+        __map_begin = __alloc_and_init(size_type(length), value);
+        __map_end = __storage_end = __map_begin + length;
+    }
+    vector (const vector<value_type> &other_v) {
+        __map_begin = __alloc_and_copy(other_v.__map_begin, other_v.__map_end);
+        __map_end = __map_begin + other_v.__map_end - other_v.__map_begin;
+    }
+    ~vector() {
+        __destroy_unit();
+        __dealloc();
+    }
+    vector<value_type>& operator=(const vector<value_type> &other_v) {
+        this->__destroy_unit();
+        this->__dealloc();
+        __map_begin = __alloc_and_copy(other_v.__map_begin, other_v.__map_end);
+        __map_end = __map_begin + other_v.__map_end - other_v.__map_begin;
+        return *this;
+    }
+
+    iterator begin() { return __map_begin; }
+    iterator end() { return __map_end; }
+    size_type size() const { return size_type(__map_end - __map_begin); }
+    size_type capacity() const { return size_type(__storage_end - __map_begin); }
+    size_type max_size() const { return this->capacity; }
+    bool empty() const { return __map_begin == __map_end; }
+    reference front() { return *begin(); }
+    reference back() { return *(back() - 1); }
+    reference operator[](size_type loca) {
+        return *(__map_begin + loca);
+    }
+
+    void push_back(value_type &value) {
+        if (capacity() < size() + 1) {
+            this->__enlarge();
+        }
+        construct(__map_end, value);
+        __map_end++;
+    }
+    void pop_back() {
+        destroy(__map_end);
+        __map_end--;
+        if (capacity() > size() * 4) {
+            this->__shrink();
+        }
+    }
+};
+
+__ASTL_NAMESPACE_END 
