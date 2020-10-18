@@ -83,6 +83,18 @@ public:
         __map_begin = __alloc_and_init(size_type(length), value);
         __map_end = __storage_end = __map_begin + length;
     }
+    vector (size_type length, value_type value) {
+        __map_begin = __alloc_and_init(length, value);
+        __map_end = __storage_end = __map_begin + length;
+    }
+    vector (int length, value_type value) {
+        __map_begin = __alloc_and_init(size_type(length), value);
+        __map_end = __storage_end = __map_begin + length;
+    }
+    vector (long length, value_type value) {
+        __map_begin = __alloc_and_init(size_type(length), value);
+        __map_end = __storage_end = __map_begin + length;
+    }
     vector (const vector<value_type> &other_v) {
         __map_begin = __alloc_and_copy(other_v.__map_begin, other_v.__map_end);
         __map_end = __map_begin + other_v.__map_end - other_v.__map_begin;
