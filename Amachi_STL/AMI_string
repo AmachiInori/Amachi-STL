@@ -13,7 +13,7 @@
 __ASTL_NAMESPACE_START
 
 /**
- * String based on AMI_std::vector
+ * String class based on full specialized AMI_std::vector
 **/
 class string : public vector<char, __secondary_allocator> {
 public:
