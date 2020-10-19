@@ -30,7 +30,7 @@ protected:
         uninitialized_copy(begin, end, res);
         return res;
     }
-    void __destroy_unit() {
+    void __destroy_element() {
         destroy(__map_begin, __map_end);
         __map_end = __map_begin;
     }
@@ -48,7 +48,7 @@ protected:
         size_type new_size = old_size == 0 ? 1 : old_size * 2;
         iterator new_begin = __vector_alloc::allocate(new_size);
         uninitialized_copy(__map_begin, __map_end, new_begin);
-        __destroy_unit();
+        __destroy_element();
         __dealloc();
         __map_begin = new_begin;
         __map_end = __map_begin + used_length;
@@ -59,7 +59,7 @@ protected:
         size_type new_size = capacity() / 2;
         iterator new_begin = __vector_alloc::allocate(new_size);
         uninitialized_copy(__map_begin, __map_end, new_begin);
-        __destroy_unit();
+        __destroy_element();
         __dealloc();
         __map_begin = new_begin;
         __map_end = __map_begin + used_length;
@@ -93,11 +93,11 @@ public:
         __map_end = __map_begin + (other_v.__map_end - other_v.__map_begin);
     }
     ~vector() {
-        __destroy_unit();
+        __destroy_element();
         __dealloc();
     }
     vector<value_type>& operator=(const vector<value_type> &other_v) {
-        this->__destroy_unit();
+        this->__destroy_element();
         this->__dealloc();
         __map_begin = __alloc_and_copy(other_v.__map_begin, other_v.__map_end);
         __map_end = __map_begin + other_v.__map_end - other_v.__map_begin;

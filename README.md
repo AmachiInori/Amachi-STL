@@ -6,6 +6,6 @@ A DIY STL by AmachiInori with C++17.
 
 ## Document
 
-- [简体中文]
+- [绠�浣撲腑鏂嘳
 - [English]
-- [日本語]
+- [鏃ユ湰瑾瀅
