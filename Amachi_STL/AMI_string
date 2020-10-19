@@ -1,0 +1,26 @@
+# pragma once
+# include "AMI_vector"
+
+__ASTL_NAMESPACE_START
+
+class string : public vector<char, __secondary_allocator> {
+public:
+    string(size_type _length) : vector(_length) { }
+    string(size_type _length, const char &_c) : vector(_length, _c) { }
+    string(size_type _length, const char* _str) : vector((char*)_str, (char*)_str + _length) { }
+    string(iterator _begin, iterator _end) : vector(_begin, _end) { }
+    size_type length() const { return vector::size(); }
+    void append(const char &_c) { vector::push_back(_c); }
+    char* c_str() { return vector::begin(); }
+    string substr(iterator _begin, iterator _end) { return string(_begin, _end); }
+    string substr(size_type _begin, size_type _end) { return substr(_begin + vector::begin(), _end + vector::begin()); }
+    bool compare(string &_str) {
+        if (this->length() != _str.length()) return false;
+        for (size_type i = 0; i < this->length(); i++) {
+            if (this->at(i) != _str.at(i)) return false;
+        }
+        return true;
+    }
+};
+
+__ASTL_NAMESPACE_END 

@@ -66,7 +66,7 @@ class __secondary_allocator {
     static const _AMI_size_t max_bytes = 128;
     static const _AMI_size_t chain_number = max_bytes / unit;
 
-    static _AMI_size_t __round (_AMI_size_t n) { return (n + unit - 1) & ~(unit - 1); }
+    static _AMI_size_t __round (_AMI_size_t n) { return ((n) + unit - 1) & ~(unit - 1); }
     static _AMI_size_t __find_list_loca (_AMI_size_t __size) {
         return __size / unit;
     } 

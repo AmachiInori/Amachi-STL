@@ -20,7 +20,7 @@ protected:
     iterator __map_end = 0;
     iterator __storage_end = 0;
     
-    iterator __alloc_and_init(size_type length, reference value) {
+    iterator __alloc_and_init(size_type length, const value_type &value) {
         iterator res = __vector_alloc::allocate(length);
         uninitialized_fill_n(res, length, value);
         return res;
@@ -43,7 +43,7 @@ protected:
         __storage_end = 0;
     }
     void __enlarge() {
-        size_type old_size = size();
+        size_type old_size = capacity();
         size_type used_length = size_type(__map_end - __map_begin);
         size_type new_size = old_size == 0 ? 1 : old_size * 2;
         iterator new_begin = __vector_alloc::allocate(new_size);
@@ -56,7 +56,7 @@ protected:
     }
     void __shrink() {
         size_type used_length = size_type(__map_end - __map_begin);
-        size_type new_size = size() / 2;
+        size_type new_size = capacity() / 2;
         iterator new_begin = __vector_alloc::allocate(new_size);
         uninitialized_copy(__map_begin, __map_end, new_begin);
         __destroy_unit();
@@ -71,33 +71,26 @@ public:
         __map_begin = __alloc_and_init(length, size_type());
         __map_end = __storage_end = __map_begin + length;
     }
-    vector (size_type length, const reference value) {
+    vector (iterator __begin, iterator __end) {
+        size_type __length = __end - __begin;
+        __map_begin = __alloc_and_copy(__begin, __end);
+        __map_end = __map_begin + __length;
+    }
+    vector (size_type length, const value_type &value) {
         __map_begin = __alloc_and_init(length, value);
         __map_end = __storage_end = __map_begin + length;
     }
-    vector (int length, const reference value) {
+    vector (int length, const value_type &value) {
         __map_begin = __alloc_and_init(size_type(length), value);
         __map_end = __storage_end = __map_begin + length;
     }
-    vector (long length, const reference value) {
-        __map_begin = __alloc_and_init(size_type(length), value);
-        __map_end = __storage_end = __map_begin + length;
-    }
-    vector (size_type length, value_type value) {
-        __map_begin = __alloc_and_init(length, value);
-        __map_end = __storage_end = __map_begin + length;
-    }
-    vector (int length, value_type value) {
-        __map_begin = __alloc_and_init(size_type(length), value);
-        __map_end = __storage_end = __map_begin + length;
-    }
-    vector (long length, value_type value) {
+    vector (long length, const value_type &value) {
         __map_begin = __alloc_and_init(size_type(length), value);
         __map_end = __storage_end = __map_begin + length;
     }
     vector (const vector<value_type> &other_v) {
         __map_begin = __alloc_and_copy(other_v.__map_begin, other_v.__map_end);
-        __map_end = __map_begin + other_v.__map_end - other_v.__map_begin;
+        __map_end = __map_begin + (other_v.__map_end - other_v.__map_begin);
     }
     ~vector() {
         __destroy_unit();
@@ -111,6 +104,9 @@ public:
         return *this;
     }
 
+    value_type at(size_type loca) {
+        return (*this)[loca];
+    }
     iterator begin() { return __map_begin; }
     iterator end() { return __map_end; }
     size_type size() const { return size_type(__map_end - __map_begin); }
@@ -123,7 +119,7 @@ public:
         return *(__map_begin + loca);
     }
 
-    void push_back(value_type &value) {
+    void push_back(const value_type &value) {
         if (capacity() < size() + 1) {
             this->__enlarge();
         }
@@ -136,6 +132,93 @@ public:
         if (capacity() > size() * 4) {
             this->__shrink();
         }
+    }
+
+    iterator erase(iterator pos) {
+        if (pos + 1 != end()) {
+            copy(pos + 1, end(), pos);
+        }
+        destroy(__map_end--);
+        if (capacity() > size() * 4) {
+            this->__shrink();
+        }
+        return pos;
+    }
+    iterator erase(size_type pos) {
+        return erase(begin() + pos);
+    }
+    iterator erase(iterator _begin, iterator _end) {
+        size_type dele_length = _end - _begin;
+        copy(_end, end(), _begin);
+        destroy(end() - dele_length, end());
+        __map_end -= dele_length;
+        while (capacity() > size() * 4) {
+            this->__shrink();
+        }
+        return _begin;
+    }
+    iterator erase(size_type _begin, size_type _end) {
+        return erase(begin() + _begin, begin() + _end);
+    }
+
+    iterator insert(iterator pos, size_type length, const value_type& value) {
+        return insert(pos - begin(), length, value);
+    }
+    iterator insert(size_type pos, size_type length, const value_type& value) {
+        while (capacity() < size() + length) {
+            __enlarge();
+        }
+        iterator new_pos = begin() + pos;
+        if (size_type(end() - new_pos) >= length) {
+            uninitialized_copy(end() - length, end(), end());
+            copy_backward(new_pos, new_pos + length, new_pos + length);
+            fill_n(new_pos, length, value);
+            __map_end += length;
+        } else {
+            iterator fill_end = end() + length - size_type(end() - new_pos);
+            uninitialized_fill(end(), fill_end, value);
+            uninitialized_copy(new_pos, end(), fill_end);
+            fill(new_pos, end(), value);
+            __map_end += length;
+        }
+        return new_pos;
+    }
+    iterator insert(size_type pos, const value_type& value) {
+        return insert(pos, 1, value);
+    }
+    iterator insert(iterator pos, const value_type& value) {
+        return insert(pos, 1, value);
+    }
+
+    void reverse() {
+        size_type length = size();
+        for (size_type i = 0; i < length / 2; i++) {
+            swap((*this)[i], (*this)[length - i - 1]);
+        }
+    }
+    iterator clear() { return erase(begin(), end()); }
+    void resize(size_type _size, const value_type& value) { 
+        if (_size > size()) {
+            insert(end(), _size - size(), value);
+        } else {
+            erase(begin() + _size, end());
+        }
+    }
+    void resize(size_type _size) {
+        resize(_size, value_type());
+    }
+
+    iterator find_first_not_of(const value_type &_target) {
+        return ::AMI_std::find_first_not_of(begin(), end(), _target);
+    }
+    iterator find_first_of(const value_type &_target) {
+        return ::AMI_std::find_first_of(begin(), end(), _target);
+    }
+    iterator find_last_of(const value_type &_target) {
+        return ::AMI_std::find_last_of(begin(), end(), _target);
+    }
+    iterator find_last_not_of(const value_type &_target) {
+        return ::AMI_std::find_last_not_of(begin(), end(), _target);
     }
 };
 

@@ -25,4 +25,60 @@ inline forward_iterator copy(input_iterator begin, input_iterator end, forward_i
     return target;
 }
 
+template <class input_iterator, class forward_iterator>
+inline forward_iterator copy_backward(input_iterator begin, input_iterator end, forward_iterator target) {  //only POD types
+    for (; begin != end; end--, target--) {
+        *target = *begin;
+    }
+    return target;
+}
+
+template <class type>
+inline void swap(type &a, type &b) {
+    type temp = a;
+    a = b;
+    b = temp;
+}
+
+template <class input_iterator, class value_type>
+inline input_iterator find_first_of(input_iterator begin, input_iterator end, const value_type &value) {
+    for (; begin != end; begin++) {
+        if (*begin == value) return begin;
+    }
+    return end;
+}
+
+template <class input_iterator, class value_type>
+inline input_iterator find_first_not_of(input_iterator begin, input_iterator end, const value_type &value) {
+    for (; begin != end; begin++) {
+        if (*begin != value) return begin;
+    }
+    return end;
+}
+
+template <class input_iterator, class value_type>
+inline input_iterator find_last_not_of(input_iterator begin, input_iterator end, const value_type &value) {
+    input_iterator old = end;
+    end--;
+    for (; begin != end; end--) {
+        if (*end != value) return end;
+    }
+    return old;
+}
+
+template <class input_iterator, class value_type>
+inline input_iterator find_last_of(input_iterator begin, input_iterator end, const value_type &value) {
+    input_iterator old = end;
+    end--;
+    for (; begin != end; end--) {
+        if (*end == value) return end;
+    }
+    return old;
+}
+
+template <class value_type>
+inline value_type min(value_type a, value_type b) {
+    return a >= b ? b : a;
+}
+
 __ASTL_NAMESPACE_END
