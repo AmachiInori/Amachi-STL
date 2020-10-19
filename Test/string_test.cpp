@@ -1,15 +1,12 @@
-# include <iostream>
 # include "../Amachi_STL/AMI_string"
-# include "string"
+# include <string>
+# include <iostream>
 
 int main() {
-    AMI_std::string test(4, "1234");
-    AMI_std::string test2(4, "4321");
-    for (auto &i : test) {
-        std::cout << i;
-    }
-    if (!test.compare(test2)) std::cout << "yes";
-    std::cout << test.length();
-    std::cout << *test.find_first_of('a');
+    AMI_std::string test("12345678");
+    AMI_std::string test2("12345678");
+    test = test + test2;
+    std::cout << test << "\n";
+    std::cout << test2 << "\n";
     return 0;
 }

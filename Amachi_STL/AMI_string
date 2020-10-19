@@ -1,26 +1,67 @@
 # pragma once
 # include "AMI_vector"
+# include <iostream>
+
+/**
+ * Open source by GPL 3.0 by amachi Inori
+ * 
+ * Main header file of string
+ * The string is declared and defined in this file with namespace AMI_std
+ * Some overloaded stream operations are also defined in this file with namespace AMI_std
+**/
 
 __ASTL_NAMESPACE_START
 
+/**
+ * String based on AMI_std::vector
+**/
 class string : public vector<char, __secondary_allocator> {
 public:
     string(size_type _length) : vector(_length) { }
     string(size_type _length, const char &_c) : vector(_length, _c) { }
-    string(size_type _length, const char* _str) : vector((char*)_str, (char*)_str + _length) { }
+    string(size_type _length, const char* _str) : vector((char*)_str, (char*)(_str + _length)) { }
+    string(const char* _str) : vector((char*)_str, (char*)_str + strlen(_str)) {}
     string(iterator _begin, iterator _end) : vector(_begin, _end) { }
     size_type length() const { return vector::size(); }
-    void append(const char &_c) { vector::push_back(_c); }
+    string& append(const char &_c) { 
+        vector::push_back(_c);
+        return (*this);
+    }
+    string& append(const string &_c) { 
+        while (this->size() + _c.size() > this->capacity()) 
+            this->__enlarge();
+        uninitialized_copy(_c.__map_begin, _c.__map_end, this->end());
+        this->__map_end += _c.size();
+        return (*this);
+    }
     char* c_str() { return vector::begin(); }
     string substr(iterator _begin, iterator _end) { return string(_begin, _end); }
     string substr(size_type _begin, size_type _end) { return substr(_begin + vector::begin(), _end + vector::begin()); }
-    bool compare(string &_str) {
+    bool compare(const string &_str) {
         if (this->length() != _str.length()) return false;
         for (size_type i = 0; i < this->length(); i++) {
-            if (this->at(i) != _str.at(i)) return false;
+            if (this->at(i) != *(_str.__map_begin + i)) return false;
         }
         return true;
     }
+    bool operator==(const string &other_str) {
+        return compare(other_str);
+    }
+    string operator+(const string &_c) { //加法运算符绝对不返回引用
+        string temp = *this;
+        temp += _c;
+        return temp;
+    }
+    string& operator+=(const string &_c) {
+        return (append(_c));
+    }
 };
+
+std::ostream &operator<<(std::ostream& os, string &str) {
+    for (auto c : str) {
+        os << c;
+    }
+    return os;
+}
 
 __ASTL_NAMESPACE_END 

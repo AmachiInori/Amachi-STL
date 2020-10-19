@@ -81,4 +81,10 @@ inline value_type min(value_type a, value_type b) {
     return a >= b ? b : a;
 }
 
+_AMI_size_t strlen(const char* _str) {
+    int _i = 0;
+    for (_i = 0; _str[_i] != '\0'; _i++);
+    return _i;
+}
+
 __ASTL_NAMESPACE_END
