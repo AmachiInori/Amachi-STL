@@ -6,7 +6,7 @@ This is a simple version of STL standard library, which is in the development st
 
 Due to the limited programming skills, the efficiency and stability of this STL must be worse than those famous libraries (such as SGI STL), but I ensure that the coding is intuitive and readable, which is suitable for beginners to learn the basic operation and construction of STL.
 
-Therefore, I have made some optimization in coding style and readability. However, in order to ensure brevity, the notes only indicate the English description of user visible methods and functions. For other descriptions or Chinese descriptions, please refer to the documents.
+Therefore, I have made some optimization in coding style and readability. However, in order to ensure brevity, the notes only indicate the English description of user visible methods and functions. For other descriptions or Chinese or Japanese descriptions, please refer to the documents.
 
 ## Multi-Language Document
 

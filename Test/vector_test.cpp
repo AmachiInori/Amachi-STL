@@ -4,7 +4,7 @@
 
 int main() {
     int i = 0;
-    AMI_std::vector<int> test = {1, 2, 3, 4, 5}; //必须是引用？
+    AMI_std::vector<int> test = {1, 2, 3, 4, 5};
     test.print();
     test.reverse();
     std::cout << test;
