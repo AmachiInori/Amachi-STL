@@ -1,14 +1,14 @@
 # pragma once
 # include "AMI_allocate"
 # include "initializer_list"
-# include "iostream"
+# include <iostream>
 
 /**
  * This file is the user oriented part of amachi STL
  * Open source by MIT by amachi Inori
  * 
- * Main header file of dynamic array vector
- * The dynamic array vector is declared and defined in this file with namespace AMI_std
+ * Main header file of dynamic array AMI_std::vector
+ * The dynamic array AMI_std::vector is declared and defined in this file with namespace AMI_std
  * Some overloaded stream operations are also defined in this file with namespace AMI_std
 **/
 
@@ -109,7 +109,7 @@ public:
      * __begin - iterator - the start point of the copied array
      * __end   - iterator - the end point of the copied array
     **/
-    vector (iterator __begin, iterator __end) noexcept {
+    vector(iterator __begin, iterator __end) noexcept {
         size_type __length = __end - __begin;
         __map_begin = __alloc_and_copy(__begin, __end);
         __map_end = __storage_end = __map_begin + __length;
@@ -121,7 +121,7 @@ public:
      * length - unsigned int        - the length of the array
      * value  - const value_type &  - the copied element
     **/
-    vector (size_type length, const value_type &value) noexcept {
+    vector(size_type length, const value_type &value) noexcept {
         __map_begin = __alloc_and_init(length, value);
         __map_end = __storage_end = __map_begin + length;
     }
@@ -132,7 +132,7 @@ public:
      * length - int                 - the length of the array
      * value  - const value_type &  - the copied element
     **/
-    vector (int length, const value_type &value) noexcept {
+    vector(int length, const value_type &value) noexcept {
         __map_begin = __alloc_and_init(size_type(length), value);
         __map_end = __storage_end = __map_begin + length;
     }
@@ -143,7 +143,7 @@ public:
      * length - long int            - the length of the array
      * value  - const value_type &  - the copied element
     **/
-    vector (long length, const value_type &value) noexcept {
+    vector(long length, const value_type &value) noexcept {
         __map_begin = __alloc_and_init(size_type(length), value);
         __map_end = __storage_end = __map_begin + length;
     }
@@ -153,11 +153,17 @@ public:
      * no return 
      * other_v - const vector<value_type> & - the copied vector
     **/
-    vector (const vector<value_type> &other_v) noexcept {
+    vector(const vector<value_type> &other_v) noexcept {
         __map_begin = __alloc_and_copy(other_v.__map_begin, other_v.__map_end);
         __map_end = __storage_end = __map_begin + (other_v.__map_end - other_v.__map_begin);
     }
-    vector (const std::initializer_list<value_type> &i_list) noexcept : 
+
+    /** 
+     * Constructor of vector with a initializer_list
+     * no return 
+     * i_list - std::initializer_list<value_type> & - the initializer_list
+    **/
+    vector(const std::initializer_list<value_type> &i_list) noexcept : 
         vector((iterator)i_list.begin(), (iterator)i_list.end()) {}
 
     /**
