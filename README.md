@@ -2,7 +2,7 @@
 
 ## What is this
 
-This is a simple version of STL standard library, which is in the development stage. Depending on the characteristics of C + + 11, compilers above C + + 11 can support it.
+This is a simple version of STL standard library, which is in the development stage. Depending on the characteristics of C++11, compilers above C++11 can support it.
 
 Due to the limited programming skills, the efficiency and stability of this STL must be worse than those famous libraries (such as SGI STL), but I ensure that the coding is intuitive and readable, which is suitable for beginners to learn the basic operation and construction of STL.
 
