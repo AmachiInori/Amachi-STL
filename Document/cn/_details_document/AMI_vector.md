@@ -16,7 +16,7 @@ AMI_std::vector需要一个定义了`value_type* allocate(unsigned int)`和`void dealloc
 
 ### public成员方法
 
-一、类实例结构方法
+**一、类实例结构方法**
 
 #### `vector()` 
 
@@ -74,7 +74,7 @@ AMI_std::vector需要一个定义了`value_type* allocate(unsigned int)`和`void dealloc
 
 进行了稳定性优化，适配自我赋值情况，因此效率可能偏低。
 
-二、数据结构方法
+**二、类数据结构方法**
 
 ## 文件`AMI_vector`
 
