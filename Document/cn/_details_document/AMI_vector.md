@@ -52,13 +52,13 @@ AMI_std::vector需要一个定义了`value_type* allocate(unsigned int)`和`void dealloc
 
 构造一个长度为`length`的vector实例，其中的元素均调用其复制构造函数构造，参数为`value`，因此`value_type`须拥有复制构造函数，否则编译不通过。
 
-#### 'vector(const vector<value_type> &other_v)'
+#### `vector(const vector<value_type> &other_v)`
 
 复制构造函数。
 
 复制构造`other_v`的副本，其中每一个数组元素均由其复制构造函数构造。
 
-#### 'vector(const std::initializer_list<value_type> &i_list)'
+#### `vector(const std::initializer_list<value_type> &i_list)`
 
 针对`std::initializer_list`的接口，委托`vector(iterator __begin, iterator __end)`构造实例。
 
