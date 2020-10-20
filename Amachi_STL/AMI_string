@@ -3,7 +3,7 @@
 # include <iostream>
 
 /**
- * Open source by GPL 3.0 by amachi Inori
+ * Open source by MIT by amachi Inori
  * 
  * Main header file of string
  * The string is declared and defined in this file with namespace AMI_std
@@ -12,16 +12,20 @@
 
 __ASTL_NAMESPACE_START
 
+inline bool isUpperAlpha(char _c) { return _c >= 'A' && _c <= 'Z'; }
+inline bool isLowerAlpha(char _c) { return _c >= 'a' && _c <= 'z'; }
+
 /**
  * String class based on full specialized AMI_std::vector
 **/
 class string : public vector<char, __secondary_allocator> {
 public:
-    string(size_type _length) : vector(_length) { }
-    string(size_type _length, const char &_c) : vector(_length, _c) { }
-    string(size_type _length, const char* _str) : vector((char*)_str, (char*)(_str + _length)) { }
-    string(const char* _str) : vector((char*)_str, (char*)_str + strlen(_str)) {}
-    string(iterator _begin, iterator _end) : vector(_begin, _end) { }
+    string() noexcept = default;
+    explicit string(size_type _length) noexcept : vector(_length) { }
+    string(size_type _length, const char &_c) noexcept : vector(_length, _c) { }
+    string(size_type _length, const char* _str) noexcept : vector((char*)_str, (char*)(_str + _length)) { }
+    string(const char* _str) noexcept : vector((char*)_str, (char*)_str + strlen(_str)) {}
+    string(iterator _begin, iterator _end) noexcept : vector(_begin, _end) { }
     size_type length() const { return vector::size(); }
     string& append(const char &_c) { 
         vector::push_back(_c);
@@ -34,7 +38,11 @@ public:
         this->__map_end += _c.size();
         return (*this);
     }
-    char* c_str() { return vector::begin(); }
+    char* c_str() const { return vector::__map_begin; }
+    string& reverse() { 
+        vector::reverse();
+        return (*this);
+    }
     string substr(iterator _begin, iterator _end) { return string(_begin, _end); }
     string substr(size_type _begin, size_type _end) { return substr(_begin + vector::begin(), _end + vector::begin()); }
     bool compare(const string &_str) {
@@ -55,13 +63,31 @@ public:
     string& operator+=(const string &_c) {
         return (append(_c));
     }
+    string& to_lower() {
+        for (auto &c : *this) {
+            if (isUpperAlpha(c)) c = c + 'a' - 'A';
+        }
+        return (*this);
+    }
+    string& to_upper() {
+        for (auto &c : *this) {
+            if (isLowerAlpha(c)) c = c + 'A' - 'a';
+        }
+        return (*this);
+    }
 };
 
-std::ostream &operator<<(std::ostream& os, string &str) {
-    for (auto c : str) {
-        os << c;
-    }
+std::ostream &operator<<(std::ostream& os, const string &str) {
+    os << str.c_str();
     return os;
+}
+
+std::istream &operator>>(std::istream& is, string &str) {
+    char _str[is.width()];
+    is >> _str;
+    str.clear();
+    str.append({_str});
+    return is;
 }
 
 __ASTL_NAMESPACE_END 

@@ -1,9 +1,10 @@
 # pragma once
 # include "AMI_allocate"
 # include "initializer_list"
+# include "iostream"
 
 /**
- * Open source by GPL 3.0 by amachi Inori
+ * Open source by MIT by amachi Inori
  * 
  * Main header file of dynamic array vector
  * The dynamic array vector is declared and defined in this file with namespace AMI_std
@@ -88,14 +89,14 @@ public:
      * no return 
      * 
     **/
-    vector() = default;
+    vector() noexcept = default;
 
     /** 
      * Constructor of vector with a uint length, element uses its default constructor 
      * no return 
      * length - unsigned int - the length of the array
     **/
-    explicit vector(size_type length) {
+    explicit vector(size_type length) noexcept {
         __map_begin = __alloc_and_init(length, size_type());
         __map_end = __storage_end = __map_begin + length;
     }
@@ -106,7 +107,7 @@ public:
      * __begin - iterator - the start point of the copied array
      * __end   - iterator - the end point of the copied array
     **/
-    vector (iterator __begin, iterator __end) {
+    vector (iterator __begin, iterator __end) noexcept {
         size_type __length = __end - __begin;
         __map_begin = __alloc_and_copy(__begin, __end);
         __map_end = __storage_end = __map_begin + __length;
@@ -118,7 +119,7 @@ public:
      * length - unsigned int        - the length of the array
      * value  - const value_type &  - the copied element
     **/
-    vector (size_type length, const value_type &value) {
+    vector (size_type length, const value_type &value) noexcept {
         __map_begin = __alloc_and_init(length, value);
         __map_end = __storage_end = __map_begin + length;
     }
@@ -129,7 +130,7 @@ public:
      * length - int                 - the length of the array
      * value  - const value_type &  - the copied element
     **/
-    vector (int length, const value_type &value) {
+    vector (int length, const value_type &value) noexcept {
         __map_begin = __alloc_and_init(size_type(length), value);
         __map_end = __storage_end = __map_begin + length;
     }
@@ -140,7 +141,7 @@ public:
      * length - long int            - the length of the array
      * value  - const value_type &  - the copied element
     **/
-    vector (long length, const value_type &value) {
+    vector (long length, const value_type &value) noexcept {
         __map_begin = __alloc_and_init(size_type(length), value);
         __map_end = __storage_end = __map_begin + length;
     }
@@ -150,17 +151,17 @@ public:
      * no return 
      * other_v - const vector<value_type> & - the copied vector
     **/
-    vector (const vector<value_type> &other_v) {
+    vector (const vector<value_type> &other_v) noexcept {
         __map_begin = __alloc_and_copy(other_v.__map_begin, other_v.__map_end);
         __map_end = __storage_end = __map_begin + (other_v.__map_end - other_v.__map_begin);
     }
-    vector (const std::initializer_list<value_type> &i_list) : 
+    vector (const std::initializer_list<value_type> &i_list) noexcept : 
         vector((iterator)i_list.begin(), (iterator)i_list.end()) {}
 
     /**
      * Destructor of vector
     **/
-    ~vector() {
+    ~vector() noexcept {
         __destroy_element();
         __dealloc();
     }
@@ -242,7 +243,7 @@ public:
      * returns: value_type& - the last element of vector
      * 
     **/
-    reference back() { return *(back() - 1); }
+    reference back() { return *(end() - 1); }
 
     /**
      * Gets the reference of the element according to the subscript
@@ -391,8 +392,8 @@ public:
 
     /**
      * Reverse vector and return its reference
-     * returns: 
-     * Reference to the reversed vector
+     * returns: Reference to the reversed vector
+     * 
     **/
     vector& reverse() {
         size_type length = size();
@@ -469,6 +470,23 @@ public:
     iterator find_last_not_of(const value_type &_target) {
         return ::AMI_std::find_last_not_of(begin(), end(), _target);
     }
+
+    void print (const char* _div = ", ") {
+        for (size_type i = 0; i < size() - 1; i++) {
+            std::cout << (*this)[i] << _div;
+        }
+        std::cout << back();
+        std::cout << "\n";
+    }
 };
+
+template <class T> 
+std::ostream &operator<<(std::ostream& os, vector<T> &_v) {
+    for (_AMI_size_t i = 0; i < _v.size() - 1; i++) {
+        std::cout << _v[i] << ", ";
+    }
+    std::cout << _v.back();
+    return os;
+}
 
 __ASTL_NAMESPACE_END 
