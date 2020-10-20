@@ -4,10 +4,12 @@
 # include "iostream"
 
 /**
+ * This file is the user oriented part of amachi STL
  * Open source by MIT by amachi Inori
  * 
  * Main header file of dynamic array vector
  * The dynamic array vector is declared and defined in this file with namespace AMI_std
+ * Some overloaded stream operations are also defined in this file with namespace AMI_std
 **/
 
 __ASTL_NAMESPACE_START
@@ -471,6 +473,11 @@ public:
         return ::AMI_std::find_last_not_of(begin(), end(), _target);
     }
 
+    /**
+     * Output vector elements with fixed separator, Stream operation operators that overload elements are required.
+     * no returns
+     * _div - const char* (default: ", ") - the separator
+    **/
     void print (const char* _div = ", ") {
         for (size_type i = 0; i < size() - 1; i++) {
             std::cout << (*this)[i] << _div;

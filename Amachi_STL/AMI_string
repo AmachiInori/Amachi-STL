@@ -3,6 +3,7 @@
 # include <iostream>
 
 /**
+ * This file is the user oriented part of amachi STL
  * Open source by MIT by amachi Inori
  * 
  * Main header file of string

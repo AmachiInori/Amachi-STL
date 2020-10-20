@@ -3,6 +3,13 @@
 # include "AMI_base/AMI_uninit.h"
 # include "AMI_base/AMI_construct.h"
 
+/**
+ * This file is the user oriented part of amachi STL
+ * Open source by MIT by amachi Inori
+ * 
+ * Main header file of allocator
+**/
+
 __ASTL_NAMESPACE_START
 
 template<class __value_type, class allocator = __secondary_allocator> 
