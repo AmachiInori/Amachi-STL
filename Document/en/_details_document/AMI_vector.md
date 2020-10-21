@@ -26,53 +26,56 @@ The default constructor constructs an empty vector instance.
 
 Constructor.
 
-构造一个长度为`length`的vector实例，其中的元素均调用其默认构造函数构造，因此`value_type`须拥有默认构造函数，否则编译不通过。
+Construct a vector with a given length, all elements in the instance will use its default constructor to construct, so `value_type` must have a default constructor, otherwise the compilation fails.
 
 #### `vector(iterator __begin, iterator __end)`
 
-构造函数。
+Constructor.
 
-构造一个vector实例，并将从迭代器`__begin`到`__end`之间的所有元素复制进入其中
+Construct a vector with two iterators, all the elements from `__begin` to `__end` will be copied in the new vector.
 
 #### `vector(size_type length, const value_type &value)`
 
-构造函数。
+Constructor.
 
-构造一个长度为`length`的vector实例，其中的元素均调用其复制构造函数构造，参数为`value`，因此`value_type`须拥有复制构造函数，否则编译不通过。
+Construct a vector with a given length, all elements in the instance will use its copy constructor to construct with the parameter `value`, so `value_type` must have a copy constructor, otherwise the compilation fails.
+
 
 #### `vector(int length, const value_type &value)`
 
-构造函数。
+Constructor.
 
-构造一个长度为`length`的vector实例，其中的元素均调用其复制构造函数构造，参数为`value`，因此`value_type`须拥有复制构造函数，否则编译不通过。
+Construct a vector with a given length, all elements in the instance will use its copy constructor to construct with the parameter `value`, so `value_type` must have a copy constructor, otherwise the compilation fails.
+
 
 #### `vector(long length, const value_type &value)`
 
-构造函数。
+Constructor.
 
-构造一个长度为`length`的vector实例，其中的元素均调用其复制构造函数构造，参数为`value`，因此`value_type`须拥有复制构造函数，否则编译不通过。
+Construct a vector with a given length, all elements in the instance will use its copy constructor to construct with the parameter `value`, so `value_type` must have a copy constructor, otherwise the compilation fails.
+
 
 #### `vector(const vector<value_type> &other_v)`
 
-复制构造函数。
+Copy constructor.
 
-复制构造`other_v`的副本，其中每一个数组元素均由其复制构造函数构造。
+Copy-construct a copy of `other_v`, each of the elements will be constructed with its copy constructor.
 
 #### `vector(const std::initializer_list<value_type> &i_list)`
 
-针对`std::initializer_list`的接口，委托`vector(iterator __begin, iterator __end)`构造实例。
+In orded to fit the `std::initializer_list` class, delegate `vector(iterator __begin, iterator __end)` to construct the vector.
 
 #### `~vector()`
 
-标准析构函数。以默认析构函数析构所有的数组元素并释放空间。
+Standard destructor. Destructs all array elements with the default destructor and frees up memory.
 
 #### `vector<value_type>& operator=(const vector<value_type> &other_v)`
 
-标准赋值运算重载。
+Standard assignment operation overload.
 
-将本实例替换为目标实例的副本，其中的数组元素均以其复制构造函数构造。
+Replace this instance with a copy of the target instance, where the array elements are constructed with their copy constructors.
 
-进行了稳定性优化，适配自我赋值情况，因此效率可能偏低。
+Stability optimization is carried out to adapt to the self assignment situation, so the efficiency may be low.
 
 **二 类数据结构方法**
 
