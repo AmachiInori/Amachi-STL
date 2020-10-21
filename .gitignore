@@ -35,7 +35,8 @@
 .VSCodeCounter
 .vscode
 Debug
-.sln
-.vcxproj
-.vcxproj.filters
-.vcxproj.user
+
+testing.sln
+testing.vcxproj
+testing.vcxproj.filters
+testing.vcxproj.user
