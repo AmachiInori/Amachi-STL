@@ -230,7 +230,7 @@ public:
      * returns: unsigned int - memory size of vector
      * 
     **/
-    size_type max_size() const { return this->capacity; }
+    size_type max_size() const { return this->capacity(); }
 
     /**
      * Judge whether vector is empty
@@ -294,6 +294,7 @@ public:
      * pos - iterator - the iterator
     **/
     iterator erase(iterator pos) {
+        size_type relative = pos - __map_begin;
         if (pos + 1 != end()) {
             copy(pos + 1, end(), pos);
         }
@@ -301,7 +302,7 @@ public:
         if (capacity() > size() * 4) {
             this->__shrink();
         }
-        return pos;
+        return __map_begin + relative;
     }
 
     /**
@@ -320,6 +321,7 @@ public:
      * _end   - iterator    -  the end point of deletion
     **/
     iterator erase(iterator _begin, iterator _end) {
+        size_type relative = _begin - __map_begin;
         size_type dele_length = _end - _begin;
         copy(_end, end(), _begin);
         destroy(end() - dele_length, end());
@@ -327,7 +329,7 @@ public:
         while (capacity() > size() * 4) {
             this->__shrink();
         }
-        return _begin;
+        return __map_begin + relative;
     }
 
     /**
