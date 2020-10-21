@@ -14,7 +14,7 @@ Therefore, I have made some optimization in coding style and readability. Howeve
 
 |File|Document|Description|
 |:----:|:----:|:----:|
-|[AMI_allocate](../../Amachi_STL/AMI_allocate)|[AMI_allocate](/Document/cn/_details_document/AMI_allocate.md)|Memory allocator|
-|[AMI_array](../../Amachi_STL/AMI_array)|[AMI_array](/Document/cn/_details_document/AMI_array.md)|Static array|
-|[AMI_vector](../../Amachi_STL/AMI_vector)|[AMI_vector](/Document/cn/_details_document/AMI_vector.md)|Dynamic array class `vector`|
+|[AMI_allocate](../../Amachi_STL/AMI_allocate)|[AMI_allocate](/Document/en/_details_document/AMI_allocate.md)|Memory allocator|
+|[AMI_array](../../Amachi_STL/AMI_array)|[AMI_array](/Document/en/_details_document/AMI_array.md)|Static array|
+|[AMI_vector](../../Amachi_STL/AMI_vector)|[AMI_vector](/Document/en/_details_document/AMI_vector.md)|Dynamic array class `vector`|
 
