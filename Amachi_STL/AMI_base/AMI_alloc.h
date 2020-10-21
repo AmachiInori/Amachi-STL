@@ -68,7 +68,7 @@ class __secondary_allocator {
 
     static _AMI_size_t __round (_AMI_size_t n) { return ((n) + unit - 1) & ~(unit - 1); }
     static _AMI_size_t __find_list_loca (_AMI_size_t __size) {
-        return __size / unit;
+        return (__size - 1) / unit;
     } 
     static union list_node* volatile __main_table[chain_number];
 
@@ -90,7 +90,7 @@ class __secondary_allocator {
             __memory_pool_start += ask_size;
             return result;
         } else {
-            _AMI_size_t __bytes_to_new = 2 * ask_size + __round(__used_heap_size >> 4);
+            _AMI_size_t __bytes_to_new = 2 * ask_size + __round(__used_heap_size >> 6);
             if (remain_size > 0) {
                 union list_node* volatile *target = __main_table + __find_list_loca(__size);
                 union list_node* new_node = (union list_node*)__memory_pool_start;
@@ -107,15 +107,15 @@ class __secondary_allocator {
                         __memory_pool_start = (char*)*target;
                         __memory_pool_end = ((char*)*target + i);
                         __main_table[__find_list_loca(__size)] = __main_table[__find_list_loca(__size)]->next;
-                        return __pool_alloc(__size, __bytes_to_new);
+                        return __pool_alloc(__size, __got_node_number);
                     }
                 }
                 __memory_pool_end = 0;
                 __memory_pool_start = (char*)__primary_allocator::allocate(__bytes_to_new);
             }
-            __used_heap_size += __got_node_number * __size;
-            __memory_pool_end = __memory_pool_start + __size;
-            return __pool_alloc(__size, __bytes_to_new);
+            __used_heap_size += __bytes_to_new;
+            __memory_pool_end = __memory_pool_start + __bytes_to_new;
+            return __pool_alloc(__size, __got_node_number);
         }
     }
     static void *__refill(_AMI_size_t __size) {
@@ -139,7 +139,7 @@ public:
         if (__size > max_bytes) return __primary_allocator::allocate(__size);
         union list_node* volatile *target = __main_table + __find_list_loca(__size);
         union list_node* tempPtC = *target;
-        if (tempPtC == 0) {
+        if (tempPtC == nullptr) {
             void *res = __refill(__round(__size));
             return res;
         }

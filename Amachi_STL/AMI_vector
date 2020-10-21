@@ -65,7 +65,12 @@ protected:
     void __enlarge() {
         size_type old_size = capacity();
         size_type used_length = size_type(__map_end - __map_begin);
-        size_type new_size = old_size == 0 ? 1 : old_size * 2;
+        size_type new_size;
+        if (old_size == 0) new_size = 1;
+        else if (old_size <= 512) new_size = old_size * 2;
+        else if (old_size <= 4096) new_size = old_size * 1.7;
+        else if (old_size <= 65536) new_size = old_size * 1.4;
+        else new_size = old_size * 1.1;
         iterator new_begin = __vector_alloc::allocate(new_size);
         uninitialized_copy(__map_begin, __map_end, new_begin);
         __destroy_element();
