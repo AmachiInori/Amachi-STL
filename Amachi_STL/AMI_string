@@ -56,7 +56,7 @@ public:
     bool operator==(const string &other_str) {
         return compare(other_str);
     }
-    string operator+(const string &_c) { //加法运算符绝对不返回引用
+    string operator+(const string &_c) const { //加法运算符绝对不返回引用
         string temp = *this;
         temp += _c;
         return temp;

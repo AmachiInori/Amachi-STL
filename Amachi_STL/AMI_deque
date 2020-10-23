@@ -1,0 +1,128 @@
+# pragma once
+# include "AMI_allocate"
+# include "initializer_list"
+# include <iostream>
+
+__ASTL_NAMESPACE_START
+
+template <class T, class alloc, _AMI_size_t _bufsize>
+class __deque_iterator : 
+public __base_iterator <__ittag_random_iterator, T> {
+public:
+    typedef T               value_type;
+    typedef T*              pointer;
+    typedef T&              reference;
+    typedef _AMI_size_t     size_type;
+    typedef _AMI_ptrdiff_t  difference_type;
+    typedef T**             map_pointer;
+
+    typedef __deque_iterator<T, alloc, _bufsize> self;
+
+protected:
+    pointer current_element;
+    pointer node_begin;
+    pointer node_end;
+    map_pointer current_node;
+
+    static _AMI_size_t buf_size() {
+        return _bufsize != 0 ? _bufsize : (sizeof(T) < 512 ? _AMI_size_t(512 / sizeof(T)) : 1);
+    }
+    void set_node(map_pointer node) {
+        current_node = node;
+        node_begin = *node;
+        node_end = node_begin + buf_size();
+    }
+
+public:
+    reference& operator* () const {
+        return *current_element;
+    }
+    pointer operator->() const {
+        return current_element;
+    }
+    self& operator+=(_AMI_size_t _length) {
+        difference_type len_frm_sta = (current_element - node_begin) +  _length;
+        if (len_frm_sta >= 0 && len_frm_sta < buf_size()) {
+            current_element += _length;
+        } else {
+            difference_type node_len = len_frm_sta / buf_size();
+            difference_type element_len = len_frm_sta % buf_size();
+            set_node(current_node + node_len);
+            current_element = node_begin + element_len;
+        }
+        return *this;
+    }
+    self& operator-=(_AMI_size_t _length) {
+        return this->operator+=(-_length);
+    }
+    self operator+(_AMI_size_t _length) {
+        self temp = *this;
+        temp += _length;
+        return temp;
+    }
+    self operator-(_AMI_size_t _length) {
+        self temp = *this;
+        temp -= _length;
+        return temp;
+    }
+    self& operator++() {
+        current_element++;
+        if (current_element == node_end) {
+            set_node(current_node + 1);
+            current_element = node_begin;
+        }
+        return *this;
+    }
+    self operator++(int) {
+        self old = *this;
+        ++(*this);
+        return old;
+    }
+    self& operator--() {
+        if (current_element == node_begin) {
+            set_node(current_node - 1);
+            current_node = node_end;
+        }
+        current_node--;
+        return *this;
+    }
+    self& operator--(int) {
+        self old = *this;
+        --(*this);
+        return old;
+    }
+    reference operator[](_AMI_size_t _length) {
+        return *(*this + _length);
+    }
+    bool operator==(const self &_other) const override {
+        return _other.current_element == this->current_element;
+    }
+    bool operator!=(const self &_other) const override {
+        return _other.current_element != this->current_element;
+    }
+    bool operator<(const self &_other) const {
+        return (this->current_node == _other.current_node ? 
+                this->current_element < _other.current_element :
+                this->current_node < _other.current_node);
+    }
+};
+
+template <class T, class alloc = __secondary_allocator, int _bufsize = 0>
+class deque {
+public:
+    typedef T               value_type;
+    typedef T*              pointer;
+    typedef T&              reference;
+    typedef _AMI_size_t     size_type;
+    typedef _AMI_ptrdiff_t  difference_type;
+    typedef T**             map_pointer;
+
+    typedef __deque_iterator<T, alloc, _bufsize> iterator;
+
+protected:
+    map_pointer __map;
+    iterator __begin;
+    iterator __end;
+};
+
+__ASTL_NAMESPACE_END 
