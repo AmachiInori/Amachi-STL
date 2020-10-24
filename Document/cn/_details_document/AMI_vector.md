@@ -226,7 +226,7 @@ AMI_std::vector需要一个定义了`value_type* allocate(unsigned int)`和`void dealloc
 
 从右到左顺序查找第一个与`_target`不相等的实例，并返回实例指针，线性时间复杂度。
 
-需调用类实例的重载相等运算符`!=`
+需调用类实例的重载相异运算符`!=`
 
 #### `void print (const char* _div = ", ")`
 
