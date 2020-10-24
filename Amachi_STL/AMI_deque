@@ -24,7 +24,7 @@ protected:
     pointer node_end;
     map_pointer current_node;
 
-    static _AMI_size_t buf_size() {
+    static size_type buf_size() {
         return _bufsize != 0 ? _bufsize : (sizeof(T) < 512 ? _AMI_size_t(512 / sizeof(T)) : 1);
     }
     void set_node(map_pointer node) {
@@ -40,7 +40,7 @@ public:
     pointer operator->() const {
         return current_element;
     }
-    self& operator+=(_AMI_size_t _length) {
+    self& operator+=(size_type _length) {
         difference_type len_frm_sta = (current_element - node_begin) +  _length;
         if (len_frm_sta >= 0 && len_frm_sta < buf_size()) {
             current_element += _length;
@@ -52,18 +52,33 @@ public:
         }
         return *this;
     }
-    self& operator-=(_AMI_size_t _length) {
+    self& operator-=(size_type _length) {
         return this->operator+=(-_length);
     }
-    self operator+(_AMI_size_t _length) {
+    self operator+(size_type _length) {
         self temp = *this;
         temp += _length;
         return temp;
     }
-    self operator-(_AMI_size_t _length) {
+    self operator-(size_type _length) {
         self temp = *this;
         temp -= _length;
         return temp;
+    }
+    difference_type operator-(self& _other) {
+        if (this->current_node == _other.current_node) {
+            return difference_type(this->current_node - _other.current_node);
+        } else {
+            if (this->current_node > _other.current_node) {
+                return difference_type(((this->current_node - _other.current_node) - 1) * buf_size() + 
+                                        (this->current_element - this->node_begin) + 
+                                        (_other.node_end - _other.current_element));
+            } else {
+                return -difference_type(((_other.current_node - this->current_node) - 1) * buf_size() + 
+                                         (_other.current_element - _other.node_begin) + 
+                                         (this->node_end - this->current_element));
+            }
+        }
     }
     self& operator++() {
         current_element++;
@@ -86,12 +101,12 @@ public:
         current_node--;
         return *this;
     }
-    self& operator--(int) {
+    self operator--(int) {
         self old = *this;
         --(*this);
         return old;
     }
-    reference operator[](_AMI_size_t _length) {
+    reference operator[](size_type _length) {
         return *(*this + _length);
     }
     bool operator==(const self &_other) const override {
@@ -107,7 +122,7 @@ public:
     }
 };
 
-template <class T, class alloc = __secondary_allocator, int _bufsize = 0>
+template <class T, class alloc = base_allocator<T>, int _bufsize = 0>
 class deque {
 public:
     typedef T               value_type;
@@ -123,6 +138,26 @@ protected:
     map_pointer __map;
     iterator __begin;
     iterator __end;
+
+    size_type __map_size;
+
+    typedef base_allocator<value_type, __secondary_allocator> node_alloc;
+    typedef base_allocator<pointer, __secondary_allocator> map_alloc;
+
+    void fill_init(size_type length, const value_type &value) {
+        
+    }
+public:
+    iterator begin() { return __begin; }
+    iterator end() { return __end; }
+    reference operator[](size_type __n) {
+        return __begin[difference_type(__n)];
+    }
+    size_type size() const { return (__end - __begin); }
+    size_type max_size() const { return -1; }
+    bool empty() const { return __end == __begin; }
+    reference front() { return *__begin; }
+    reference back() { return *(__end - 1); }
 };
 
 __ASTL_NAMESPACE_END 

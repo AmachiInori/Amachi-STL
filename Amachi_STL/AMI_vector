@@ -22,7 +22,7 @@ __ASTL_NAMESPACE_START
  * (So iterators are more likely to fail) Use a relative cursor to store the location
  * some practical methods have been added
 **/
-template <class T, class alloc = __secondary_allocator> 
+template <class T, class alloc = base_allocator<T>> 
 class vector {
 public:
     typedef T               value_type;
@@ -93,15 +93,15 @@ protected:
 public:
     /** 
      * Default constructor of vector
-     * no return 
+     * @return no return 
      * 
     **/
     vector() noexcept = default;
 
     /** 
      * Constructor of vector with a uint length, element uses its default constructor 
-     * no return 
-     * length - unsigned int - the length of the array
+     * @return no return 
+     * @param length - unsigned int - the length of the array
     **/
     explicit vector(size_type length) noexcept {
         __map_begin = __alloc_and_init(length, size_type());
@@ -110,9 +110,9 @@ public:
 
     /** 
      * Constructor of vector with two iterator to copy all the elements between __begin and __end 
-     * no return 
-     * __begin - iterator - the start point of the copied array
-     * __end   - iterator - the end point of the copied array
+     * @return no return 
+     * @param __begin - iterator - the start point of the copied array
+     * @param __end   - iterator - the end point of the copied array
     **/
     vector(iterator __begin, iterator __end) noexcept {
         size_type __length = __end - __begin;
@@ -122,9 +122,9 @@ public:
 
     /** 
      * Constructor of vector with a uint length, element uses its copy constructor 
-     * no return 
-     * length - unsigned int        - the length of the array
-     * value  - const value_type &  - the copied element
+     * @return no return 
+     * @param length - unsigned int        - the length of the array
+     * @param value  - const value_type &  - the copied element
     **/
     vector(size_type length, const value_type &value) noexcept {
         __map_begin = __alloc_and_init(length, value);
@@ -133,9 +133,9 @@ public:
 
     /** 
      * Constructor of vector with a int length, element uses its copy constructor 
-     * no return 
-     * length - int                 - the length of the array
-     * value  - const value_type &  - the copied element
+     * @return no return 
+     * @param length - int                 - the length of the array
+     * @param value  - const value_type &  - the copied element
     **/
     vector(int length, const value_type &value) noexcept {
         __map_begin = __alloc_and_init(size_type(length), value);
@@ -144,9 +144,9 @@ public:
 
     /** 
      * Constructor of vector with a long int length, element uses its copy constructor 
-     * no return 
-     * length - long int            - the length of the array
-     * value  - const value_type &  - the copied element
+     * @return no return 
+     * @param length - long int            - the length of the array
+     * @param value  - const value_type &  - the copied element
     **/
     vector(long length, const value_type &value) noexcept {
         __map_begin = __alloc_and_init(size_type(length), value);
@@ -155,8 +155,8 @@ public:
 
     /** 
      * Copy constructor of vector
-     * no return 
-     * other_v - const vector<value_type> & - the copied vector
+     * @return no return 
+     * @param other_v - const vector<value_type> & - the copied vector
     **/
     vector(const vector<value_type> &other_v) noexcept {
         __map_begin = __alloc_and_copy(other_v.__map_begin, other_v.__map_end);
@@ -165,8 +165,8 @@ public:
 
     /** 
      * Constructor of vector with a initializer_list
-     * no return 
-     * i_list - std::initializer_list<value_type> & - the initializer_list
+     * @return no return 
+     * @param i_list - std::initializer_list<value_type> & - the initializer_list
     **/
     vector(const std::initializer_list<value_type> &i_list) noexcept : 
         vector((iterator)i_list.begin(), (iterator)i_list.end()) {}
@@ -181,8 +181,8 @@ public:
 
     /**
      * Standard assignment operator
-     * returns: vector<value_type> & - lvalue of assignment
-     * other_v - const vector<value_type> & - the right value of assignment  
+     * @return returns: vector<value_type> & - lvalue of assignment
+     * @param other_v - const vector<value_type> & - the right value of assignment  
     **/
     vector<value_type>& operator=(const vector<value_type> &other_v) {
         vector<value_type> temp(other_v);
@@ -195,8 +195,8 @@ public:
 
     /**
      * Gets the reference of the element according to the subscript
-     * returns: value_type & - the element according to the subscript
-     * loca - unsigned int - the subscript 
+     * @return returns: value_type & - the element according to the subscript
+     * @param loca - unsigned int - the subscript 
     **/
     value_type& at(size_type loca) {
         return (*this)[loca];
@@ -204,64 +204,64 @@ public:
 
     /**
      * Gets the begin itreator of vector
-     * returns: iterator - the begin itreator of vector
+     * @return returns: iterator - the begin itreator of vector
      * 
     **/
     iterator begin() { return __map_begin; }
 
     /**
      * Gets the end itreator of vector
-     * returns: iterator - the end itreator of vector
+     * @return returns: iterator - the end itreator of vector
      * 
     **/
     iterator end() { return __map_end; }
 
     /**
      * Gets the occupied size of vector
-     * returns: unsigned int - occupied size of vector
+     * @return returns: unsigned int - occupied size of vector
      * 
     **/
     size_type size() const { return size_type(__map_end - __map_begin); }
 
     /**
      * Gets the memory size of vector
-     * returns: unsigned int - memory size of vector
+     * @return returns: unsigned int - memory size of vector
      * 
     **/
     size_type capacity() const { return size_type(__storage_end - __map_begin); }
 
     /**
      * Gets the memory size of vector
-     * returns: unsigned int - memory size of vector
+     * @return returns: unsigned int - memory size of vector
      * 
     **/
     size_type max_size() const { return this->capacity(); }
 
     /**
      * Judge whether vector is empty
-     * returns: bool
+     * @return returns: bool
      * 
     **/
     bool empty() const { return __map_begin == __map_end; }
 
     /**
      * Gets the first element of vector
-     * returns: value_type& - the last element of vector
+     * @return returns: value_type& - the last element of vector
      * 
     **/
     reference front() { return *begin(); }
 
     /**
      * Gets the last element of vector
-     * returns: value_type& - the last element of vector
+     * @return returns: value_type& - the last element of vector
      * 
     **/
     reference back() { return *(end() - 1); }
 
     /**
      * Gets the reference of the element according to the subscript
-     * returns: value_type & - the element according to the subscript
-     * loca - unsigned int - the subscript 
+     * @return returns: value_type & - the element according to the subscript
+     * @param loca - unsigned int - the subscript 
     **/
     reference operator[](size_type loca) {
         return *(__map_begin + loca);
@@ -269,8 +269,8 @@ public:
 
     /**
      * Add an element to the end of the vector
-     * no return 
-     * value - const value_type & - elements to be added
+     * @return no return 
+     * @param value - const value_type & - elements to be added
     **/
     void push_back(const value_type &value) {
         if (capacity() < size() + 1) {
@@ -282,7 +282,7 @@ public:
 
     /**
      * Remove an element from the end of the vector
-     * no return 
+     * @return no return 
      * 
     **/
     void pop_back() {
@@ -295,8 +295,8 @@ public:
 
     /**
      * Delete the element that iterator pos refers to
-     * returns: iterator - iterator to deleted position
-     * pos - iterator - the iterator
+     * @return returns: iterator - iterator to deleted position
+     * @param pos - iterator - the iterator
     **/
     iterator erase(iterator pos) {
         size_type relative = pos - __map_begin;
@@ -312,8 +312,8 @@ public:
 
     /**
      * Delete the element that subscript pos refers to
-     * returns: iterator - iterator to deleted position
-     * pos - unsigned int - the subscript
+     * @return returns: iterator - iterator to deleted position
+     * @param pos - unsigned int - the subscript
     **/
     iterator erase(size_type pos) {
         return erase(begin() + pos);
@@ -321,9 +321,9 @@ public:
 
     /**
      * Delete the elements from _begin to _end
-     * returns: iterator - iterator to the _begin iterator
-     * _begin - iterator    -  the begin point of deletion
-     * _end   - iterator    -  the end point of deletion
+     * @return returns: iterator - iterator to the _begin iterator
+     * @param _begin - iterator    -  the begin point of deletion
+     * @param _end   - iterator    -  the end point of deletion
     **/
     iterator erase(iterator _begin, iterator _end) {
         size_type relative = _begin - __map_begin;
@@ -339,9 +339,9 @@ public:
 
     /**
      * Delete the elements from _begin to _end
-     * returns: iterator - iterator to the _begin iterator
-     * _begin - unsigned int    -  the begin point of deletion
-     * _end   - unsigned int    -  the end point of deletion
+     * @return returns: iterator - iterator to the _begin iterator
+     * @param _begin - unsigned int    -  the begin point of deletion
+     * @param _end   - unsigned int    -  the end point of deletion
     **/
     iterator erase(size_type _begin, size_type _end) {
         return erase(begin() + _begin, begin() + _end);
@@ -349,10 +349,10 @@ public:
 
     /**
      * Insert a sequence of elements with a given length at a given point
-     * returns: iterator - iterator to the insert-begin iterator
-     * pos    - iterator               -  the begin point of insertion
-     * length - unsigned int           -  the length of the length of insert
-     * value  - const value_type&      -  the value of the inserted element
+     * @return returns: iterator - iterator to the insert-begin iterator
+     * @param pos    - iterator               -  the begin point of insertion
+     * @param length - unsigned int           -  the length of the length of insert
+     * @param value  - const value_type&      -  the value of the inserted element
     **/
     iterator insert(iterator pos, size_type length, const value_type& value) {
         return insert(pos - begin(), length, value);
@@ -360,10 +360,10 @@ public:
 
     /**
      * Insert a sequence of elements with a given length at a given point
-     * returns: iterator - iterator to the insert-begin iterator
-     * pos    - unsigned int           -  the begin point of insertion
-     * length - unsigned int           -  the length of the length of insert
-     * value  - const value_type&      -  the value of the inserted element
+     * @return returns: iterator - iterator to the insert-begin iterator
+     * @param pos    - unsigned int           -  the begin point of insertion
+     * @param length - unsigned int           -  the length of the length of insert
+     * @param value  - const value_type&      -  the value of the inserted element
     **/
     iterator insert(size_type pos, size_type length, const value_type& value) {
         while (capacity() < size() + length) {
@@ -387,9 +387,9 @@ public:
 
     /**
      * Insert one elements at a given point
-     * returns: iterator - iterator to the insert-begin iterator
-     * pos    - unsigned int           -  the point of insertion
-     * value  - const value_type&      -  the value of the inserted element
+     * @return returns: iterator - iterator to the insert-begin iterator
+     * @param pos    - unsigned int           -  the point of insertion
+     * @param value  - const value_type&      -  the value of the inserted element
     **/
     iterator insert(size_type pos, const value_type& value) {
         return insert(pos, 1, value);
@@ -397,9 +397,9 @@ public:
 
     /**
      * Insert one elements at a given point
-     * returns: iterator - iterator to the insert-begin iterator
-     * pos    - iterator               -  the point of insertion
-     * value  - const value_type&      -  the value of the inserted element
+     * @return returns: iterator - iterator to the insert-begin iterator
+     * @param pos    - iterator               -  the point of insertion
+     * @param value  - const value_type&      -  the value of the inserted element
     **/
     iterator insert(iterator pos, const value_type& value) {
         return insert(pos, 1, value);
@@ -407,7 +407,7 @@ public:
 
     /**
      * Reverse vector and return its reference
-     * returns: Reference to the reversed vector
+     * @return returns: Reference to the reversed vector
      * 
     **/
     vector& reverse() {
@@ -420,7 +420,7 @@ public:
 
     /**
      * Clears all elements of the vector without reallocating space
-     * returns: the first iterator of the cleared vector
+     * @return returns: the first iterator of the cleared vector
      * 
     **/
     iterator clear() { return erase(begin(), end()); }
@@ -428,9 +428,9 @@ public:
     /**
      * Resets the size of the vector 
      * discards elements that are out of range OR fill in the new free space
-     * no returns
-     * _size    - unsigned int      - the new size
-     * value    - const value_type& - elements to fill in (if possible)
+     * @return no returns
+     * @param _size    - unsigned int      - the new size
+     * @param value    - const value_type& - elements to fill in (if possible)
     **/
     void resize(size_type _size, const value_type& value) { 
         if (_size > size()) {
@@ -443,8 +443,8 @@ public:
     /**
      * Resets the size of the vector 
      * discards elements that are out of range OR fill in the new free space with its default ctor
-     * no returns
-     * _size    - unsigned int      - the new size
+     * @return no returns
+     * @param _size    - unsigned int      - the new size
     **/
     void resize(size_type _size) {
         resize(_size, value_type());
@@ -452,8 +452,8 @@ public:
 
     /**
      * Find the first element that is not equal to value
-     * returns: iterator - required iterator
-     * _target - const value_type & - the target
+     * @return returns: iterator - required iterator
+     * @param _target - const value_type & - the target
     **/
     iterator find_first_not_of(const value_type &_target) {
         return ::AMI_std::find_first_not_of(begin(), end(), _target);
@@ -461,8 +461,8 @@ public:
 
     /**
      * Find the first element that is equal to value
-     * returns: iterator - required iterator
-     * _target - const value_type & - the target
+     * @return returns: iterator - required iterator
+     * @param _target - const value_type & - the target
     **/
     iterator find_first_of(const value_type &_target) {
         return ::AMI_std::find_first_of(begin(), end(), _target);
@@ -470,8 +470,8 @@ public:
 
     /**
      * Find the last element that is equal to value
-     * returns: iterator - required iterator
-     * _target - const value_type & - the target
+     * @return returns: iterator - required iterator
+     * @param _target - const value_type & - the target
     **/
     iterator find_last_of(const value_type &_target) {
         return ::AMI_std::find_last_of(begin(), end(), _target);
@@ -479,8 +479,8 @@ public:
 
     /**
      * Find the last element that is not equal to value
-     * returns: iterator - required iterator
-     * _target - const value_type & - the target
+     * @return returns: iterator - required iterator
+     * @param _target - const value_type & - the target
     **/
     iterator find_last_not_of(const value_type &_target) {
         return ::AMI_std::find_last_not_of(begin(), end(), _target);
@@ -488,8 +488,8 @@ public:
 
     /**
      * Output vector elements with fixed separator, Stream operation operators that overload elements are required.
-     * no returns
-     * _div - const char* (default: ", ") - the separator
+     * @return no returns
+     * @param _div - const char* (default: ", ") - the separator
     **/
     void print (const char* _div = ", ") {
         for (size_type i = 0; i < size() - 1; i++) {

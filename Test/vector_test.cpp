@@ -38,7 +38,7 @@ public:
 int main() {
     Solution s;
     vector<int> test = {1, 2, 4, 8, 16, 32, 64, 128, 256};
-    s.combinationSum(test, 250).print();
+    s.combinationSum(test, 200).print();
 
     int i = 0;
     vector<int> test1 = {1, 2, 3, 4, 5};
