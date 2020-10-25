@@ -1,0 +1,10 @@
+# include "AMI_vector"
+
+__ASTL_NAMESPACE_START
+
+template <class T>
+class matrix {  
+    
+};
+
+__ASTL_NAMESPACE_END

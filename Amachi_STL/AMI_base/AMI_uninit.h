@@ -25,8 +25,14 @@ template <class forward_iterator, class value_type>
 inline void
 __uninitialized_fill(forward_iterator start, forward_iterator end, 
                      const value_type &value, __false) {
-    for (; start != end; start++) {
-        construct(start, value);
+    forward_iterator __start = start;
+    try {
+        for (; start != end; start++) {
+            construct(&*start, value);
+        }
+    }catch (...) { // commit or rollback
+        AMI_std::destroy(&*__start, &*start);
+        throw;
     }
 }
 
@@ -49,10 +55,16 @@ template <class forward_iterator, class value_type, class size_type>
 inline forward_iterator 
 __uninitialized_fill_n(forward_iterator start, size_type length, 
                        const value_type &value, __false) {
-    for (; length > 0; start++, length--) {
-        construct(&*start, value);
+    forward_iterator __start = start;
+    try {
+        for (; length > 0; start++, length--) {
+            construct(&*start, value);
+        }
+        return start;
+    }catch (...) {
+        AMI_std::destroy(&*__start, &*start);
+        throw;
     }
-    return start;
 }
 
 template <class input_iterator, class forward_iterator>
@@ -72,10 +84,16 @@ __uninitialized_copy(input_iterator begin, input_iterator end, forward_iterator 
 template <class input_iterator, class forward_iterator>
 inline forward_iterator
 __uninitialized_copy(input_iterator begin, input_iterator end, forward_iterator target, __false) {
-    for (; begin != end; begin++, target++) {
-        construct(&*target, *begin);
+    forward_iterator start = target;
+    try {
+        for (; begin != end; begin++, target++) {
+            construct(&*target, *begin);
+        }
+    }catch (...) {
+        AMI_std::destroy(start, target);
+        throw;
     }
-    return target;
+    return start;
 }
 
 __ASTL_NAMESPACE_END 

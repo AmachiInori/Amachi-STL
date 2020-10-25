@@ -12,7 +12,7 @@
 
 __ASTL_NAMESPACE_START
 
-template<class __value_type, class allocator = __secondary_allocator> 
+template <class __value_type, class allocator = __secondary_allocator> 
 class base_allocator {
 public:
     typedef __value_type            value_type;

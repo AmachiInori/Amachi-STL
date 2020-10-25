@@ -18,22 +18,20 @@ public:
 
     typedef __deque_iterator<T, alloc, _bufsize> self;
 
-protected:
     pointer current_element;
     pointer node_begin;
     pointer node_end;
     map_pointer current_node;
 
-    static size_type buf_size() {
-        return _bufsize != 0 ? _bufsize : (sizeof(T) < 512 ? _AMI_size_t(512 / sizeof(T)) : 1);
-    }
     void set_node(map_pointer node) {
         current_node = node;
         node_begin = *node;
         node_end = node_begin + buf_size();
     }
 
-public:
+    static size_type buf_size() {
+        return _bufsize != 0 ? _bufsize : (sizeof(T) < 512 ? _AMI_size_t(512 / sizeof(T)) : 1);
+    }
     reference& operator* () const {
         return *current_element;
     }
@@ -65,7 +63,7 @@ public:
         temp -= _length;
         return temp;
     }
-    difference_type operator-(self& _other) {
+    difference_type operator-(const self& _other) {
         if (this->current_node == _other.current_node) {
             return difference_type(this->current_node - _other.current_node);
         } else {
@@ -122,7 +120,7 @@ public:
     }
 };
 
-template <class T, class alloc = base_allocator<T>, int _bufsize = 0>
+template <class T, class alloc = __secondary_allocator, int _bufsize = 0>
 class deque {
 public:
     typedef T               value_type;
@@ -135,19 +133,85 @@ public:
     typedef __deque_iterator<T, alloc, _bufsize> iterator;
 
 protected:
-    map_pointer __map;
+    map_pointer __map = 0;
     iterator __begin;
     iterator __end;
 
-    size_type __map_size;
+    size_type __map_size = 0;
 
-    typedef base_allocator<value_type, __secondary_allocator> node_alloc;
-    typedef base_allocator<pointer, __secondary_allocator> map_alloc;
+    typedef base_allocator<value_type, alloc> node_alloc;
+    typedef base_allocator<pointer, alloc> map_alloc;
 
-    void fill_init(size_type length, const value_type &value) {
+    size_type buf_size() { return iterator::buf_size(); }
+    void _fill_init(size_type length, const value_type &value) {
+        __init_node_and_map(length);
+        map_pointer it;
+        try {
+            for (it = __begin.current_node; it < __end.current_node; it++) {
+                uninitialized_fill(*it, *it + buf_size(), value);
+            }
+            uninitialized_fill(__end.node_begin, __end.current_element, value);
+        }catch (...) {
+            map_pointer _de_it;
+            for (_de_it = __begin.current_node; _de_it < it; _de_it++) {
+                AMI_std::destroy(_de_it, _de_it + buf_size());
+            }
+            throw;
+        }
+    }
+    void _copy_init(pointer _cpy_start, pointer _cpy_end) {
+        __init_node_and_map(_cpy_end - _cpy_start);
+        map_pointer it;
+        try {
+            for (it = __begin.current_node; it < __end.current_node; it++, _cpy_start += buf_size()) {
+                uninitialized_copy(_cpy_start, _cpy_start + buf_size(), *it);
+            }
+            uninitialized_copy(_cpy_start, _cpy_end, __end.node_begin);
+        }catch (...) {
+            map_pointer _de_it;
+            for (_de_it = __begin.current_node; _de_it < it; _de_it++) {
+                AMI_std::destroy(_de_it, _de_it + buf_size());
+            }
+            throw;
+        }
+    }
+    pointer __allocate_node() {
+        return (pointer)node_alloc::allocate(buf_size());
+    }
+    void __init_node_and_map(size_type element_num) {
+        size_type node_number = element_num / buf_size() + 1;
+        __map_size = node_number + 2;
         
+        __map = map_alloc::allocate(__map_size);
+        map_pointer node_start = __map + (__map_size - node_number) / 2;
+        map_pointer node_end = __map + node_number - 1;
+        map_pointer it;
+        try {
+            for (it = node_start; it <= node_end; it++) {
+                *it = __allocate_node();
+            }
+        }catch(...) {
+            for (; node_start <= it; node_start++) {
+                node_alloc::deallocate(node_start);
+            }
+            throw;
+        }
+
+        __begin.set_node(node_start);
+        __begin.current_element = __begin.node_begin;
+        __end.set_node(node_end);
+        __end.current_element = __end.node_begin + (node_number % buf_size());
     }
 public:
+    deque() : deque(0, value_type()) {}
+    deque(size_type length, const value_type& value) :
+        __begin(), __end() {
+        _fill_init(length, value);
+    }
+    deque(const std::initializer_list<value_type> &i_list) :
+        __begin(), __end() {
+        _copy_init(i_list.begin(), i_list.end());
+    }
     iterator begin() { return __begin; }
     iterator end() { return __end; }
     reference operator[](size_type __n) {
