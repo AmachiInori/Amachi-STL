@@ -169,7 +169,7 @@ public:
      * @param i_list - std::initializer_list<value_type> & - the initializer_list
     **/
     vector(const std::initializer_list<value_type> &i_list) noexcept : 
-        vector((iterator)i_list.begin(), (iterator)i_list.end()) {}
+        vector((pointer)i_list.begin(), (pointer)i_list.end()) {}
 
     /**
      * Destructor of vector

@@ -16,8 +16,6 @@ class __base_iterator {
 public:
     __base_iterator() = default;
     virtual ~__base_iterator() = default;
-    virtual bool operator==(const __base_iterator&) const = 0;
-    virtual bool operator!=(const __base_iterator&) const = 0;
 };
 
 /***************************************

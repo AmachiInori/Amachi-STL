@@ -37,13 +37,13 @@ inline void construct(targetType* target, const valueType &val) {
     _construct(target, val);
 }
 
-template <class targetType>
-inline void destroy(targetType* pointer) {
+template <class __input_iterator>
+inline void destroy(__input_iterator pointer) {
     _destroy(pointer);
 }
 
-template <class targetType>
-inline void destroy(targetType* begin, targetType* end) {
+template <class __input_iterator>
+inline void destroy(__input_iterator begin, __input_iterator end) {
     _destroy(begin, end);
 }
 
