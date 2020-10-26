@@ -1,4 +1,4 @@
-# include "../Amachi_STL/AMI_string"
+# include "../Amachi_STL/AMI_string.hpp"
 # include <string>
 # include <iostream>
 

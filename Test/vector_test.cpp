@@ -1,7 +1,7 @@
 # include <iostream>
 # include <vector>
-# include "../Amachi_STL/AMI_allocate"
-# include "../Amachi_STL/AMI_vector"
+# include "../Amachi_STL/AMI_allocate.hpp"
+# include "../Amachi_STL/AMI_vector.hpp"
 
 using AMI_std::vector;
 

@@ -1,6 +1,6 @@
 # include <vector>
 # include <iostream>
-# include "../Amachi_STL/AMI_allocate"
+# include "../Amachi_STL/AMI_allocate.hpp"
 
 class Solution {
     std::vector<std::vector<int>, AMI_std::base_allocator<int>> res;
