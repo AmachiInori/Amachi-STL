@@ -104,7 +104,7 @@ public:
      * @param length - unsigned int - the length of the array
     **/
     explicit vector(size_type length) noexcept {
-        __map_begin = __alloc_and_init(length, size_type());
+        __map_begin = __alloc_and_init(length, value_type());
         __map_end = __storage_end = __map_begin + length;
     }
 
@@ -492,20 +492,20 @@ public:
      * @param _div - const char* (default: ", ") - the separator
     **/
     void print (const char* _div = ", ") {
-        for (size_type i = 0; i < size() - 1; i++) {
-            std::cout << (*this)[i] << _div;
+        for (size_type i = 1; i < size(); i++) {
+            std::cout << (*this)[i - 1] << _div;
         }
-        std::cout << back();
+        if (size() > 0) std::cout << back();
         std::cout << "\n";
     }
 };
 
 template <class T> 
 std::ostream &operator<<(std::ostream& os, vector<T> &_v) {
-    for (_AMI_size_t i = 0; i < _v.size() - 1; i++) {
-        std::cout << _v[i] << ", ";
+    for (_AMI_size_t i = 1; i < _v.size(); i++) {
+        std::cout << _v[i - 1] << ", ";
     }
-    std::cout << _v.back();
+    if (_v.size() > 0) std::cout << _v.back();
     return os;
 }
 

@@ -264,6 +264,7 @@ public:
         __begin(), __end() {
         _copy_init((pointer)i_list.begin(), (pointer)i_list.end());
     }
+    // copy ctor
     ~deque() {
         this->__destroy_all();
         this->__dealloc_all();
@@ -321,6 +322,19 @@ public:
             __begin.set_node(__begin.current_node + 1);
             __begin.current_element = __begin.node_begin;
         }
+    }
+    void clear() {
+        for (map_pointer it = __begin.current_node + 1; it <= __begin.current_node - 1; it++) {
+            AMI_std::destroy(*it, *it + buf_size());
+            node_alloc::deallocate(*it, buf_size());
+        }
+        if (__begin.current_node == __end.current_node) {
+            AMI_std::destroy(__begin.current_element, __end.current_element);
+        } else {
+            AMI_std::destroy(__end.node_begin, __end.current_element);
+            node_alloc::deallocate(__end.node_begin, buf_size());
+        }
+        __end = __begin;
     }
 };
 
