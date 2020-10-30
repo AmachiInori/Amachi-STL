@@ -372,7 +372,7 @@ public:
         iterator new_pos = begin() + pos;
         if (size_type(end() - new_pos) >= length) {
             uninitialized_copy(end() - length, end(), end());
-            copy_backward(new_pos, new_pos + length, new_pos + length);
+            copy_backward(new_pos, new_pos + length, __map_end + length);
             fill_n(new_pos, length, value);
             __map_end += length;
         } else {

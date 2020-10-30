@@ -5,13 +5,10 @@
 
 int main() {
     AMI_std::deque<int> test = {1, 2, 3, 4, 5};
-    for (int i = 0; i < 1000; i++) 
-        test.push_front(6);
-    test.clear();
-    for (int i = 0; i < 14; i++) 
-        test.push_front(7);
+    std::cout << test.size();
+    test.insert(test.begin() + 2, 10);
     for (auto a : test) {
-        std::cout << a;
+        std::cout << a << " ";
     }
     return 0;
 }

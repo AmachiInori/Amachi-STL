@@ -30,7 +30,7 @@ public:
     }
 
     static size_type buf_size() {
-        return _bufsize != 0 ? _bufsize : (sizeof(T) < 512 ? _AMI_size_t(512 / sizeof(T)) : 1);
+        return _bufsize == 0 ? 8 : (sizeof(T) < 512 ? _AMI_size_t(512 / sizeof(T)) : 1);
     }
     reference& operator* () const {
         return *current_element;
@@ -38,7 +38,7 @@ public:
     pointer operator->() const {
         return current_element;
     }
-    self& operator+=(size_type _length) {
+    self& operator+=(difference_type _length) {
         difference_type len_frm_sta = (current_element - node_begin) +  _length;
         if (len_frm_sta >= 0 && len_frm_sta < buf_size()) {
             current_element += _length;
@@ -50,22 +50,22 @@ public:
         }
         return *this;
     }
-    self& operator-=(size_type _length) {
+    self& operator-=(difference_type _length) {
         return this->operator+=(-_length);
     }
-    self operator+(size_type _length) const {
+    self operator+(difference_type _length) const {
         self temp = *this;
         temp += _length;
         return temp;
     }
-    self operator-(size_type _length) const {
+    self operator-(difference_type _length) const {
         self temp = *this;
         temp -= _length;
         return temp;
     }
     difference_type operator-(const self& _other) const {
         if (this->current_node == _other.current_node) {
-            return difference_type(this->current_node - _other.current_node);
+            return difference_type(this->current_element - _other.current_element);
         } else {
             if (this->current_node > _other.current_node) {
                 return difference_type(((this->current_node - _other.current_node) - 1) * buf_size() + 
@@ -94,9 +94,9 @@ public:
     self& operator--() {
         if (current_element == node_begin) {
             set_node(current_node - 1);
-            current_node = node_end;
+            current_element = node_end;
         }
-        current_node--;
+        current_element--;
         return *this;
     }
     self operator--(int) {
@@ -278,11 +278,16 @@ public:
     size_type max_size() const { return -1; }
     bool empty() const { return __end == __begin; }
     reference front() { return *__begin; }
-    reference back() { return *(__end - 1); }
+    reference back() { 
+        iterator _temp = end();
+        _temp--;
+        return *_temp;
+    }
 
     void push_back(const value_type& value) {
-        uninitialized_fill(__end.current_element, __end.current_element + 1, value);
+        construct(&*__end.current_element, value);
         __end.current_element++;
+
         if (__end.current_element == __end.node_end && __end.current_node == __map + __map_size - 1) {
             __enlarge_map_at_end();
         }
@@ -312,7 +317,7 @@ public:
             __begin.current_element = __begin.node_end;
         }
         __begin.current_element--;
-        uninitialized_fill(__begin.current_element, __begin.current_element + 1, value);
+        construct(__begin.current_element, value);
     }
     void pop_front() {
         destroy(__begin.current_element);
@@ -335,6 +340,17 @@ public:
             node_alloc::deallocate(__end.node_begin, buf_size());
         }
         __end = __begin;
+    }
+    void insert(const iterator &pos, const value_type& value) {
+        if (pos - __begin < size() / 2) {
+            this->push_front(front());
+            copy(__begin + 2, pos, __begin + 1);
+            *(pos - 1) = value;
+        } else {
+            this->push_back(back());
+            copy_backward(pos, __end - 2, __end - 2);
+            *pos = value;
+        }
     }
 };
 
