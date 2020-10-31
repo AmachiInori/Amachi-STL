@@ -38,11 +38,7 @@ public:
 int main() {
     Solution s;
     vector<int> test = {1, 2, 4, 8, 16, 32, 64, 128, 256};
+    test.insert(5, 2, 3);
     test.print();
-    test.clear();
-
-    test.print();
-    test.reverse();
-    std::cout << test;
     return 0;
 }

@@ -34,7 +34,9 @@ protected:
         uninitialized_fill_n(res, length, value);
         return res;
     }
-    iterator __alloc_and_copy(iterator begin, iterator end) {
+
+    template <class inpt_iter>
+    iterator __alloc_and_copy(inpt_iter begin, inpt_iter end) {
         iterator res = __array_alloc::allocate(end - begin);
         uninitialized_copy(begin, end, res);
         return res;
@@ -74,7 +76,8 @@ public:
      * __begin - iterator - the start point of the copied array
      * __end   - iterator - the end point of the copied array
     **/
-    array(iterator __begin, iterator __end) noexcept {
+    template <class inpt_iter>
+    array(inpt_iter __begin, inpt_iter __end) noexcept {
         size_type __length = __end - __begin;
         __map_begin = __alloc_and_copy(__begin, __end);
         __map_end = __map_begin + __length;
@@ -122,6 +125,11 @@ public:
         __map_begin = __alloc_and_copy(other_v.__map_begin, other_v.__map_end);
         __map_end = __map_begin + (other_v.__map_end - other_v.__map_begin);
     }
+
+    template <class other>
+    array(const other& _other) noexcept :
+        array(_other.begin(), _other.end()) {}
+
     array(const std::initializer_list<value_type> &i_list) noexcept : 
         array((iterator)i_list.begin(), (iterator)i_list.end()) {}
 

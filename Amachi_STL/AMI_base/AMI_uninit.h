@@ -86,7 +86,7 @@ class __unint_copy {
 private:
     static inline forward_iterator
     __uninitialized_copy(input_iterator begin, input_iterator end, forward_iterator target, __true) {
-        return copy(begin, end, target);
+        return AMI_std::copy(begin, end, target);
     }
 
     static  inline forward_iterator
@@ -94,7 +94,7 @@ private:
         forward_iterator start = target;
         try {
             for (; begin != end; begin++, target++) {
-                construct(&*target, *begin);
+                AMI_std::construct(&*target, *begin);
             }
         }catch (...) {
             AMI_std::destroy(start, target);
@@ -113,7 +113,7 @@ inline _forward_iterator
 uninitialized_copy(_input_iterator begin, _input_iterator end, _forward_iterator target) {
     typedef typename __iterator_traits<_input_iterator>::value_type value_type;
     typedef typename __type_traits<value_type>::is_POD_type is_POD_type;
-    return __unint_copy<_input_iterator, _forward_iterator>::
+    return AMI_std::__unint_copy<_input_iterator, _forward_iterator>::
         __uninitialized_copy(begin, end, target, is_POD_type());
 }
 

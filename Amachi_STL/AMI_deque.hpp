@@ -30,9 +30,9 @@ public:
     }
 
     static size_type buf_size() {
-        return _bufsize == 0 ? 8 : (sizeof(T) < 512 ? _AMI_size_t(512 / sizeof(T)) : 1);
+        return _bufsize != 0 ? _bufsize : (sizeof(T) < 512 ? _AMI_size_t(512 / sizeof(T)) : 1);
     }
-    reference& operator* () const {
+    reference& operator*() const {
         return *current_element;
     }
     pointer operator->() const {
@@ -43,8 +43,8 @@ public:
         if (len_frm_sta >= 0 && len_frm_sta < buf_size()) {
             current_element += _length;
         } else {
-            difference_type node_len = len_frm_sta / buf_size();
-            difference_type element_len = len_frm_sta % buf_size();
+            difference_type node_len = len_frm_sta / (difference_type)buf_size();
+            difference_type element_len = len_frm_sta % (difference_type)buf_size();
             set_node(current_node + node_len);
             current_element = node_begin + element_len;
         }
@@ -167,14 +167,16 @@ protected:
             throw;
         }
     }
-    void _copy_init(pointer _cpy_start, pointer _cpy_end) {
+
+    template <class inpt_iter>
+    void _copy_init(inpt_iter _cpy_start, inpt_iter _cpy_end) {
         __init_node_and_map(_cpy_end - _cpy_start);
         map_pointer it;
         try {
             for (it = __begin.current_node; it < __end.current_node; it++, _cpy_start += buf_size()) {
-                uninitialized_copy(_cpy_start, _cpy_start + buf_size(), *it);
+                AMI_std::uninitialized_copy(_cpy_start, _cpy_start + buf_size(), *it);
             }
-            uninitialized_copy(_cpy_start, _cpy_end, __begin.node_begin);
+            AMI_std::uninitialized_copy(_cpy_start, _cpy_end, __begin.node_begin);
         }catch (...) {
             map_pointer _de_it;
             for (_de_it = __begin.current_node; _de_it < it; _de_it++) {
@@ -255,25 +257,43 @@ protected:
         __end.current_element = __end.node_begin + (element_num % buf_size());
     }
 public:
-    deque() : deque(0, value_type()) {}
-    deque(size_type length, const value_type& value) :
+    deque() noexcept : deque(0, value_type()) {}
+    deque(size_type length, const value_type& value) noexcept :
         __begin(), __end() {
         _fill_init(length, value);
     }
-    deque(const std::initializer_list<value_type> &i_list) :
+    template <class inpt_iter>
+    deque(const inpt_iter& start, const inpt_iter& end) noexcept :
+        __begin(), __end() {
+            _copy_init(start, end);
+    }
+    template <class other_type>
+    deque(const other_type &other) noexcept :
+        __begin(), __end() {
+        _copy_init(other.begin(), other.end());
+    }
+    deque(const std::initializer_list<value_type> &i_list) noexcept :
         __begin(), __end() {
         _copy_init((pointer)i_list.begin(), (pointer)i_list.end());
     }
-    // copy ctor
-    ~deque() {
+    deque(const AMI_std::deque<value_type> &other) noexcept :
+        deque(other.begin(), other.end()) {}
+    ~deque() noexcept {
         this->__destroy_all();
         this->__dealloc_all();
+    }
+    deque<T>& operator=(const deque<T>& other) noexcept {
+        deque<T> temp(other);
+        this->__destroy_all();
+        this->__dealloc_all();
+        _copy_init(temp.begin(), temp.end());
     }
     iterator begin() { return __begin; }
     iterator end() { return __end; }
     reference operator[](size_type __n) {
         return __begin[difference_type(__n)];
     }
+    size_type capacity() const { return -1; }
     size_type size() const { return (__end - __begin); }
     size_type max_size() const { return -1; }
     bool empty() const { return __end == __begin; }
@@ -341,6 +361,9 @@ public:
         }
         __end = __begin;
     }
+    void insert(size_type loca, const value_type& value) {
+        return insert(__begin + loca, value);
+    }
     void insert(const iterator &pos, const value_type& value) {
         if (pos - __begin < size() / 2) {
             this->push_front(front());
@@ -348,8 +371,20 @@ public:
             *(pos - 1) = value;
         } else {
             this->push_back(back());
-            copy_backward(pos, __end - 2, __end - 2);
+            copy_backward(pos, __end - 2, __end - 1);
             *pos = value;
+        }
+    }
+    void erase(size_type loca) {
+        return erase(__begin + loca);
+    }
+    void erase(const iterator &pos) {
+        if (pos - __begin < size() / 2) {
+            copy_backward(__begin, pos, pos + 1);
+            this->pop_front();
+        } else {
+            copy(pos + 1, __end, pos);
+            this->pop_back();
         }
     }
 };

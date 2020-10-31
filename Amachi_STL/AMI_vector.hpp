@@ -42,12 +42,13 @@ protected:
     
     iterator __alloc_and_init(size_type length, const value_type &value) {
         iterator res = __vector_alloc::allocate(length);
-        uninitialized_fill_n(res, length, value);
+        AMI_std::uninitialized_fill_n(res, length, value);
         return res;
     }
-    iterator __alloc_and_copy(pointer begin, pointer end) {
+    template <class inpt_iter>
+    iterator __alloc_and_copy(inpt_iter begin, inpt_iter end) {
         iterator res = __vector_alloc::allocate(end - begin);
-        uninitialized_copy(begin, end, res);
+        AMI_std::uninitialized_copy(begin, end, res);
         return res;
     }
     void __destroy_element() {
@@ -114,7 +115,8 @@ public:
      * @param __begin - iterator - the start point of the copied array
      * @param __end   - iterator - the end point of the copied array
     **/
-    vector(iterator __begin, iterator __end) noexcept {
+    template <class inpt_iter>
+    vector(inpt_iter __begin, inpt_iter __end) noexcept {
         size_type __length = __end - __begin;
         __map_begin = __alloc_and_copy(&*__begin, &*__end);
         __map_end = __storage_end = __map_begin + __length;
@@ -170,6 +172,10 @@ public:
     **/
     vector(const std::initializer_list<value_type> &i_list) noexcept : 
         vector((pointer)i_list.begin(), (pointer)i_list.end()) {}
+
+    template <class other>
+    vector(const other& _other) noexcept :
+        vector(_other.begin(), _other.end()) {}
 
     /**
      * Destructor of vector
@@ -372,7 +378,7 @@ public:
         iterator new_pos = begin() + pos;
         if (size_type(end() - new_pos) >= length) {
             uninitialized_copy(end() - length, end(), end());
-            copy_backward(new_pos, new_pos + length, __map_end + length);
+            copy_backward(new_pos, new_pos + length, new_pos + 2 * length);
             fill_n(new_pos, length, value);
             __map_end += length;
         } else {
@@ -413,7 +419,7 @@ public:
     vector& reverse() {
         size_type length = size();
         for (size_type i = 0; i < length / 2; i++) {
-            swap((*this)[i], (*this)[length - i - 1]);
+            AMI_std::swap((*this)[i], (*this)[length - i - 1]);
         }
         return (*this);
     }

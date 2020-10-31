@@ -29,6 +29,7 @@ template <class input_iterator, class forward_iterator>
 inline forward_iterator copy_backward(input_iterator begin, input_iterator end, forward_iterator target) {  //only POD types
     end--;
     begin--;
+    target--;
     for (; begin != end; end--, target--) {
         *target = *end;
     }
