@@ -35,7 +35,7 @@ public:
     string& append(const string &_c) { 
         while (this->size() + _c.size() > this->capacity()) 
             this->__enlarge();
-        uninitialized_copy(_c.__map_begin, _c.__map_end, this->end());
+        AMI_std::uninitialized_copy(_c.__map_begin, _c.__map_end, this->end());
         this->__map_end += _c.size();
         return (*this);
     }

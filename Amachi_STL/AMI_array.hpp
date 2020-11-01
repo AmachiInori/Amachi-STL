@@ -31,14 +31,14 @@ protected:
     
     iterator __alloc_and_init(size_type length, const value_type &value) {
         iterator res = __array_alloc::allocate(length);
-        uninitialized_fill_n(res, length, value);
+        AMI_std::uninitialized_fill_n(res, length, value);
         return res;
     }
 
     template <class inpt_iter>
     iterator __alloc_and_copy(inpt_iter begin, inpt_iter end) {
         iterator res = __array_alloc::allocate(end - begin);
-        uninitialized_copy(begin, end, res);
+        AMI_std::uninitialized_copy(begin, end, res);
         return res;
     }
     void __destroy_element() {

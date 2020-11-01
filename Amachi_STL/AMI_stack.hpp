@@ -18,7 +18,7 @@ public:
         __main_cont(length, value) { }
     stack(const std::initializer_list<value_type> &i_list) noexcept :
         __main_cont(i_list) { }
-    
+
     size_type size() const { return __main_cont.size(); }
     size_type empty() const { return __main_cont.empty(); }
     size_type capacity() const { return __main_cont.capacity(); }

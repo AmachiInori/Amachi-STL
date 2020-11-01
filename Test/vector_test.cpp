@@ -37,10 +37,10 @@ public:
 
 int main() {
     Solution s;
-    vector<int> test = {1, 2, 4, 8, 16, 32, 64, 128, 256};
+    std::vector<int> test = {1, 2, 4, 8, 16, 32, 64, 128, 256};
     vector<int> testr;
     testr = test;
-    test.insert(5, 2, 3);
-    test.print();
+    testr.insert(5, 2, 3);
+    testr.print();
     return 0;
 }

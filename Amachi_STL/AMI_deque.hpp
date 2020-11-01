@@ -156,9 +156,9 @@ protected:
         map_pointer it;
         try {
             for (it = __begin.current_node; it < __end.current_node; it++) {
-                uninitialized_fill(*it, *it + buf_size(), value);
+                AMI_std::uninitialized_fill(*it, *it + buf_size(), value);
             }
-            uninitialized_fill(__end.node_begin, __end.current_element, value);
+            AMI_std::uninitialized_fill(__end.node_begin, __end.current_element, value);
         }catch (...) {
             map_pointer _de_it;
             for (_de_it = __begin.current_node; _de_it < it; _de_it++) {
@@ -192,9 +192,9 @@ protected:
         if (__map_size > 2 * _new_map_l) {
             new_start_node = __map + new_node_number + (__map_size - _new_map_l) / 2;
             if (__begin.current_node > new_start_node) {
-                copy(__begin.current_node, __end.current_node + 1, new_start_node);
+                AMI_std::copy(__begin.current_node, __end.current_node + 1, new_start_node);
             } else {
-                copy_backward(__begin.current_node, __end.current_node + 1, __begin.current_node + _old_node_num);
+                AMI_std::copy_backward(__begin.current_node, __end.current_node + 1, __begin.current_node + _old_node_num);
             }
         }else {
             map_pointer new_map = map_alloc::allocate(_new_map_l);
@@ -214,9 +214,9 @@ protected:
         if (__map_size > 2 * _new_map_l) {
             new_start_node = __map + (_new_map_l - __map_size) / 2;
             if (__begin.current_node > new_start_node) {
-                copy(__begin.current_node, __end.current_node + 1, new_start_node);
+                AMI_std::copy(__begin.current_node, __end.current_node + 1, new_start_node);
             } else {
-                copy_backward(__begin.current_node, __end.current_node + 1, __begin.current_node + _old_node_num);
+                AMI_std::copy_backward(__begin.current_node, __end.current_node + 1, __begin.current_node + _old_node_num);
             }
         } else {
             map_pointer new_map = map_alloc::allocate(_new_map_l);
@@ -306,7 +306,7 @@ public:
     }
 
     void push_back(const value_type& value) {
-        construct(&*__end.current_element, value);
+        AMI_std::construct(&*__end.current_element, value);
         __end.current_element++;
 
         if (__end.current_element == __end.node_end && __end.current_node == __map + __map_size - 1) {
@@ -326,7 +326,7 @@ public:
         } else {
             __end.current_element--;
         }
-        destroy(__end.current_element);
+        AMI_std::destroy(__end.current_element);
     }
     void push_front(const value_type& value) {
         if (__begin.current_element == __begin.node_begin && __begin.current_node == __map) {
@@ -338,7 +338,7 @@ public:
             __begin.current_element = __begin.node_end;
         }
         __begin.current_element--;
-        construct(__begin.current_element, value);
+        AMI_std::construct(__begin.current_element, value);
     }
     void pop_front() {
         destroy(__begin.current_element);
@@ -368,11 +368,11 @@ public:
     void insert(const iterator &pos, const value_type& value) {
         if (pos - __begin < size() / 2) {
             this->push_front(front());
-            copy(__begin + 2, pos, __begin + 1);
+            AMI_std::copy(__begin + 2, pos, __begin + 1);
             *(pos - 1) = value;
         } else {
             this->push_back(back());
-            copy_backward(pos, __end - 2, __end - 1);
+            AMI_std::copy_backward(pos, __end - 2, __end - 1);
             *pos = value;
         }
     }
@@ -381,10 +381,10 @@ public:
     }
     void erase(const iterator &pos) {
         if (pos - __begin < size() / 2) {
-            copy_backward(__begin, pos, pos + 1);
+            AMI_std::copy_backward(__begin, pos, pos + 1);
             this->pop_front();
         } else {
-            copy(pos + 1, __end, pos);
+            AMI_std::copy(pos + 1, __end, pos);
             this->pop_back();
         }
     }

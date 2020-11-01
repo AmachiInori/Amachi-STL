@@ -52,7 +52,7 @@ protected:
         return res;
     }
     void __destroy_element() {
-        destroy(__map_begin, __map_end);
+        AMI_std::destroy(__map_begin, __map_end);
         __map_end = __map_begin;
     }
     void __dealloc() {
@@ -73,7 +73,7 @@ protected:
         else if (old_size <= 65536) new_size = old_size * 1.4;
         else new_size = old_size * 1.1;
         iterator new_begin = __vector_alloc::allocate(new_size);
-        uninitialized_copy(__map_begin, __map_end, new_begin);
+        AMI_std::uninitialized_copy(__map_begin, __map_end, new_begin);
         __destroy_element();
         __dealloc();
         __map_begin = new_begin;
@@ -84,7 +84,7 @@ protected:
         size_type used_length = size_type(__map_end - __map_begin);
         size_type new_size = capacity() / 2;
         iterator new_begin = __vector_alloc::allocate(new_size);
-        uninitialized_copy(__map_begin, __map_end, new_begin);
+        AMI_std::uninitialized_copy(__map_begin, __map_end, new_begin);
         __destroy_element();
         __dealloc();
         __map_begin = new_begin;
@@ -283,7 +283,7 @@ public:
         if (capacity() < size() + 1) {
             this->__enlarge();
         }
-        construct(__map_end, value);
+        AMI_std::construct(__map_end, value);
         __map_end++;
     }
 
@@ -293,7 +293,7 @@ public:
      * 
     **/
     void pop_back() {
-        destroy(__map_end);
+        AMI_std::destroy(__map_end);
         __map_end--;
         if (capacity() > size() * 4) {
             this->__shrink();
@@ -308,9 +308,9 @@ public:
     iterator erase(iterator pos) {
         size_type relative = pos - __map_begin;
         if (pos + 1 != end()) {
-            copy(pos + 1, end(), pos);
+            AMI_std::copy(pos + 1, end(), pos);
         }
-        destroy(__map_end--);
+        AMI_std::destroy(__map_end--);
         if (capacity() > size() * 4) {
             this->__shrink();
         }
@@ -335,8 +335,8 @@ public:
     iterator erase(iterator _begin, iterator _end) {
         size_type relative = _begin - __map_begin;
         size_type dele_length = _end - _begin;
-        copy(_end, end(), _begin);
-        destroy(end() - dele_length, end());
+        AMI_std::copy(_end, end(), _begin);
+        AMI_std::destroy(end() - dele_length, end());
         __map_end -= dele_length;
         while (capacity() > size() * 4) {
             this->__shrink();
@@ -378,15 +378,15 @@ public:
         }
         iterator new_pos = begin() + pos;
         if (size_type(end() - new_pos) >= length) {
-            uninitialized_copy(end() - length, end(), end());
-            copy_backward(new_pos, new_pos + length, new_pos + 2 * length);
-            fill_n(new_pos, length, value);
+            AMI_std::uninitialized_copy(end() - length, end(), end());
+            AMI_std::copy_backward(new_pos, new_pos + length, new_pos + 2 * length);
+            AMI_std::fill_n(new_pos, length, value);
             __map_end += length;
         } else {
             iterator fill_end = end() + length - size_type(end() - new_pos);
-            uninitialized_fill(end(), fill_end, value);
-            uninitialized_copy(new_pos, end(), fill_end);
-            fill(new_pos, end(), value);
+            AMI_std::uninitialized_fill(end(), fill_end, value);
+            AMI_std::uninitialized_copy(new_pos, end(), fill_end);
+            AMI_std::fill(new_pos, end(), value);
             __map_end += length;
         }
         return new_pos;
