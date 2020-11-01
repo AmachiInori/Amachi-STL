@@ -188,9 +188,10 @@ public:
     /**
      * Standard assignment operator
      * @return returns: vector<value_type> & - lvalue of assignment
-     * @param other_v - const vector<value_type> & - the right value of assignment  
+     * @param other_v - const other & - the right value of assignment  
     **/
-    vector<value_type>& operator=(const vector<value_type> &other_v) {
+    template <class other>
+    vector<value_type>& operator=(const other &other_v) noexcept {
         vector<value_type> temp(other_v);
         this->__destroy_element();
         this->__dealloc();

@@ -282,7 +282,8 @@ public:
         this->__destroy_all();
         this->__dealloc_all();
     }
-    deque<T>& operator=(const deque<T>& other) noexcept {
+    template <class other_type>
+    deque<T>& operator=(const other_type& other) noexcept {
         deque<T> temp(other);
         this->__destroy_all();
         this->__dealloc_all();

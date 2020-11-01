@@ -144,9 +144,10 @@ public:
     /**
      * Standard assignment operator
      * returns: array<value_type> & - lvalue of assignment
-     * other_v - const array<value_type> & - the right value of assignment  
+     * other_v - const other & - the right value of assignment  
     **/
-    array<value_type>& operator=(const array<value_type> &other_v) {
+    template <class other>
+    array<value_type>& operator=(const other &other_v) {
         array<value_type> temp(other_v);
         this->__destroy_element();
         this->__dealloc();

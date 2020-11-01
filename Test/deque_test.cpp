@@ -4,7 +4,8 @@
 # include "../Amachi_STL/AMI_deque.hpp"
 
 int main() {
-    std::vector<int> testv = {1,2,3,4,5,6,6,7};
+    std::deque<int> deqt = {1,2,3,4,5,6,7,8};
+    std::vector<int> testv(deqt);
     AMI_std::deque<int> test(testv);
     AMI_std::deque<int> test2({1,2,3,4,5,6,6,7});
     test.insert(test.begin() + 4, 10);
