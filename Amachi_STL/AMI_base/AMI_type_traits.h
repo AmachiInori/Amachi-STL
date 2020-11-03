@@ -6,6 +6,9 @@ __ASTL_NAMESPACE_START
 class __false {};
 class __true {};
 
+typedef __false false_type;
+typedef __true true_type;
+
 template <class __type>
 class __type_traits {
 public:

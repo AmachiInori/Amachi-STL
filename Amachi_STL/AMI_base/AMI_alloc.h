@@ -2,8 +2,13 @@
 # include <stdlib.h>
 # include "AMI_type_traits.h"
 # include "AMI_iterator.h"
+# include "AMI_exception.h"
 
 __ASTL_NAMESPACE_START
+
+# ifndef __THROW_BAD_ALLOC
+#   define __THROW_BAD_ALLOC throw BAD_ALLOC()
+# endif
 
 class __primary_allocator {
     static void * out_of_memory_malloc(_AMI_size_t __size) {

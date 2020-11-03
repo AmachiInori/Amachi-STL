@@ -1,7 +1,14 @@
 # pragma once
 # include "AMI_allocate.hpp"
 # include "initializer_list"
-# include <iostream>
+
+# ifndef AMI_STL_STRICT_MODE
+#   include <iostream>
+# endif
+
+# ifndef __THROW_OUT_OF_BOUNDS
+#   define __THROW_OUT_OF_BOUNDS throw OUT_OF_BOUND()
+# endif
 
 __ASTL_NAMESPACE_START
 
@@ -118,6 +125,7 @@ public:
                 this->current_element < _other.current_element :
                 this->current_node < _other.current_node);
     }
+    pointer data() { return current_element; }
 };
 
 template <class T, class alloc = __secondary_allocator, int _bufsize = 0>
@@ -301,24 +309,27 @@ public:
         _copy_init(temp.begin(), temp.end());
     }
 
-    iterator begin() { return __begin; }
-    iterator end() { return __end; }
+    iterator begin() const noexcept { return __begin; }
+    iterator end() const noexcept { return __end; }
     reference operator[](size_type __n) {
+    # ifdef AMI_STL_STRICT_MODE
+        if (__n >= size()) __THROW_OUT_OF_BOUNDS;
+    # endif
         return __begin[difference_type(__n)];
     }
-    size_type capacity() const { return -1; }
-    size_type size() const { return (__end - __begin); }
-    size_type max_size() const { return -1; }
-    bool empty() const { return __end == __begin; }
+    size_type capacity() const noexcept { return -1; }
+    size_type size() const noexcept { return (__end - __begin); }
+    size_type max_size() const noexcept { return -1; }
+    bool empty() const noexcept { return __end == __begin; }
     reference front() { return *__begin; }
     reference back() { 
         iterator _temp = end();
-        _temp--;
+        --_temp;
         return *_temp;
     }
 
     void push_back(const value_type& value) {
-        AMI_std::construct(&*__end.current_element, value);
+        AMI_std::construct(__end.current_element, value);
         __end.current_element++;
 
         if (__end.current_element == __end.node_end && __end.current_node == __map + __map_size - 1) {
@@ -331,6 +342,9 @@ public:
         }
     }
     void pop_back() {
+    # ifdef AMI_STL_STRICT_MODE
+        if (empty()) __THROW_OUT_OF_BOUNDS;
+    # endif
         if (__end.current_element == __end.node_begin) {
             node_alloc::deallocate(__end.node_begin);
             __end.set_node(__end.current_node - 1);
@@ -353,6 +367,9 @@ public:
         AMI_std::construct(__begin.current_element, value);
     }
     void pop_front() {
+    # ifdef AMI_STL_STRICT_MODE
+        if (empty()) __THROW_OUT_OF_BOUNDS;
+    # endif
         destroy(__begin.current_element);
         __begin.current_element++;
         if (__begin.current_element == __begin.node_end) {
@@ -392,6 +409,9 @@ public:
         return erase(__begin + loca);
     }
     void erase(const iterator &pos) {
+    # ifdef AMI_STL_STRICT_MODE
+        if (empty()) __THROW_OUT_OF_BOUNDS;
+    # endif
         if (pos - __begin < size() / 2) {
             AMI_std::copy_backward(__begin, pos, pos + 1);
             this->pop_front();
@@ -401,11 +421,47 @@ public:
         }
     }
     void erase(const iterator &begin, const iterator &end) {
-        size_type deleted_length = end - begin;
+    # ifdef AMI_STL_STRICT_MODE
+        if (end - begin >= size()) __THROW_OUT_OF_BOUNDS;
+    # endif
         if (end - __end > __begin - begin) {
-            
+            iterator _new_end = AMI_std::copy(end, __end, begin);
+            for (iterator i = _new_end; i != __end; ++i) {
+                AMI_std::destroy(i.data());
+            }
+            for (map_pointer i = _new_end.current_node + 1; i <= __end.current_node; i++) {
+                node_alloc::deallocate(*i);
+            }
+            __end = _new_end;
+        } else {
+            iterator _new_beg = AMI_std::copy_backward(__begin, begin, end);
+            for (iterator i = __begin; i != _new_beg; ++i) {
+                AMI_std::destroy(i.data());
+            }
+            for (map_pointer i = __begin.current_node; i < _new_beg.current_node; i++) {
+                node_alloc::deallocate(*i);
+            }
+            __begin = _new_beg;
         }
     }
+    void print(const char* _div = ", ") {
+        for (iterator i = begin(); i < end() - 1; i++) {
+            std::cout << *i << _div;
+        }
+        if (size() > 0) std::cout << back();
+        std::cout << "\n";
+    }
 };
+
+# ifndef AMI_STL_STRICT_MODE
+    template <class T> 
+    std::ostream &operator<<(std::ostream& os, deque<T> &_v) {
+        for (typename deque<T>::iterator i = _v.begin(); i < _v.end() - 1; i++) {
+            std::cout << _v[i - 1] << ", ";
+        }
+        if (_v.size() > 0) std::cout << _v.back();
+        return os;
+    }
+# endif
 
 __ASTL_NAMESPACE_END 

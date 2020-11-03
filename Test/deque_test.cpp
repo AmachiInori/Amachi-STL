@@ -4,14 +4,8 @@
 # include "../Amachi_STL/AMI_deque.hpp"
 
 int main() {
-    std::deque<int> deqt = {1,2,3,4,5,6,7,8};
-    std::vector<int> testv(deqt);
-    AMI_std::deque<int> test(testv);
-    AMI_std::deque<int> test2({1,2,3,4,5,6,6,7});
-    test.insert(test.begin() + 4, 10);
-    test.erase(test.begin() + 4);
-    for (auto a : test) {
-        std::cout << a << " ";
-    }
+    AMI_std::deque<int> test({1,2,3,4,5,6,6,7});
+    test.erase(test.begin() + 1, test.end() - 1);
+    test.print();
     return 0;
 }

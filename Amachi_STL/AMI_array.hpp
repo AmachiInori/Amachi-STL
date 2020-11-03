@@ -2,6 +2,11 @@
 # include "AMI_allocate.hpp"
 # include "initializer_list"
 
+# ifndef AMI_STL_STRICT_MODE
+#   include <iostream>
+# endif
+
+
 /**
  * This file is the user oriented part of amachi STL
  * Open source by MIT by amachi Inori
@@ -182,28 +187,28 @@ public:
      * returns: iterator - the begin itreator of array
      * 
     **/
-    iterator begin() { return __map_begin; }
+    iterator begin() const noexcept { return __map_begin; }
 
     /**
      * Gets the end itreator of array
      * returns: iterator - the end itreator of array
      * 
     **/
-    iterator end() { return __map_end; }
+    iterator end() const noexcept { return __map_end; }
 
     /**
      * Gets the occupied size of array
      * returns: unsigned int - occupied size of array
      * 
     **/
-    size_type size() const { return size_type(__map_end - __map_begin); }
+    size_type size() const noexcept { return size_type(__map_end - __map_begin); }
 
     /**
      * Judge whether array is empty
      * returns: bool
      * 
     **/
-    bool empty() const { return __map_begin == __map_end; }
+    bool empty() const noexcept { return __map_begin == __map_end; }
 
     /**
      * Gets the first element of array
@@ -262,6 +267,19 @@ public:
     **/
     iterator find_last_not_of(const value_type &_target) {
         return ::AMI_std::find_last_not_of(begin(), end(), _target);
+    }
+
+    /**
+     * Output array elements with fixed separator, Stream operation operators that overload elements are required.
+     * @return no returns
+     * @param _div - const char* (default: ", ") - the separator
+    **/
+    void print(const char* _div = ", ") {
+        for (iterator i = begin(); i < end() - 1; i++) {
+            std::cout << *i << _div;
+        }
+        if (size() > 0) std::cout << back();
+        std::cout << "\n";
     }
 };
 

@@ -33,7 +33,7 @@ inline forward_iterator copy_backward(input_iterator begin, input_iterator end, 
     for (; begin != end; end--, target--) {
         *target = *end;
     }
-    return target;
+    return target + 1;
 }
 
 template <class type>

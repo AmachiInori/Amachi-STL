@@ -8,12 +8,13 @@ template <class __it_category, class __type
         , class __pointer   = __type*
         , class __reference = __type&>
 class __base_iterator {
+public:
     typedef __it_category   iterator_category;
     typedef __type          value_type;
     typedef __dis_type      difference_type;
     typedef __pointer       pointer;
     typedef __reference     reference;
-public:
+
     __base_iterator() = default;
     virtual ~__base_iterator() = default;
 };

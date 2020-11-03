@@ -1,7 +1,10 @@
 # pragma once
 # include "AMI_allocate.hpp"
 # include "initializer_list"
-# include <iostream>
+
+# ifndef AMI_STL_STRICT_MODE
+#   include <iostream>
+# endif
 
 /**
  * This file is the user oriented part of amachi STL
@@ -219,6 +222,9 @@ public:
      * @param loca - unsigned int - the subscript 
     **/
     value_type& at(size_type loca) {
+    # ifdef AMI_STL_STRICT_MODE
+        if (loca >= size()) __THROW_OUT_OF_BOUNDS;
+    # endif
         return (*this)[loca];
     }
 
@@ -227,42 +233,42 @@ public:
      * @return returns: iterator - the begin itreator of vector
      * 
     **/
-    iterator begin() { return __map_begin; }
+    iterator begin() const noexcept { return __map_begin; }
 
     /**
      * Gets the end itreator of vector
      * @return returns: iterator - the end itreator of vector
      * 
     **/
-    iterator end() { return __map_end; }
+    iterator end() const noexcept { return __map_end; }
 
     /**
      * Gets the occupied size of vector
      * @return returns: unsigned int - occupied size of vector
      * 
     **/
-    size_type size() const { return size_type(__map_end - __map_begin); }
+    size_type size() const noexcept { return size_type(__map_end - __map_begin); }
 
     /**
      * Gets the memory size of vector
      * @return returns: unsigned int - memory size of vector
      * 
     **/
-    size_type capacity() const { return size_type(__storage_end - __map_begin); }
+    size_type capacity() const noexcept { return size_type(__storage_end - __map_begin); }
 
     /**
      * Gets the memory size of vector
      * @return returns: unsigned int - memory size of vector
      * 
     **/
-    size_type max_size() const { return this->capacity(); }
+    size_type max_size() const noexcept { return this->capacity(); }
 
     /**
      * Judge whether vector is empty
      * @return returns: bool
      * 
     **/
-    bool empty() const { return __map_begin == __map_end; }
+    bool empty() const noexcept { return __map_begin == __map_end; }
 
     /**
      * Gets the first element of vector
@@ -284,6 +290,9 @@ public:
      * @param loca - unsigned int - the subscript 
     **/
     reference operator[](size_type loca) {
+    # ifdef AMI_STL_STRICT_MODE
+        if (loca >= size()) __THROW_OUT_OF_BOUNDS;
+    # endif
         return *(__map_begin + loca);
     }
 
@@ -306,6 +315,9 @@ public:
      * 
     **/
     void pop_back() {
+    # ifdef AMI_STL_STRICT_MODE
+        if (empty()) __THROW_OUT_OF_BOUNDS;
+    # endif
         AMI_std::destroy(__map_end);
         __map_end--;
         if (capacity() > size() * 4) {
@@ -319,6 +331,9 @@ public:
      * @param pos - iterator - the iterator
     **/
     iterator erase(iterator pos) {
+    # ifdef AMI_STL_STRICT_MODE
+        if (empty()) __THROW_OUT_OF_BOUNDS;
+    # endif
         size_type relative = pos - __map_begin;
         if (pos + 1 != end()) {
             AMI_std::copy(pos + 1, end(), pos);
@@ -348,6 +363,9 @@ public:
     iterator erase(iterator _begin, iterator _end) {
         size_type relative = _begin - __map_begin;
         size_type dele_length = _end - _begin;
+    # ifdef AMI_STL_STRICT_MODE
+        if (dele_length >= size()) __THROW_OUT_OF_BOUNDS;
+    # endif
         AMI_std::copy(_end, end(), _begin);
         AMI_std::destroy(end() - dele_length, end());
         __map_end -= dele_length;
@@ -511,9 +529,9 @@ public:
      * @return no returns
      * @param _div - const char* (default: ", ") - the separator
     **/
-    void print (const char* _div = ", ") {
-        for (size_type i = 1; i < size(); i++) {
-            std::cout << (*this)[i - 1] << _div;
+    void print(const char* _div = ", ") {
+        for (iterator i = begin(); i < end() - 1; i++) {
+            std::cout << *i << _div;
         }
         if (size() > 0) std::cout << back();
         std::cout << "\n";
@@ -523,7 +541,7 @@ public:
 # ifndef AMI_STL_STRICT_MODE
     template <class T> 
     std::ostream &operator<<(std::ostream& os, vector<T> &_v) {
-        for (_AMI_size_t i = 1; i < _v.size(); i++) {
+        for (typename vector<T>::iterator i = _v.begin(); i < _v.end() - 1; i++) {
             std::cout << _v[i - 1] << ", ";
         }
         if (_v.size() > 0) std::cout << _v.back();
