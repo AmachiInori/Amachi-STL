@@ -267,11 +267,13 @@ public:
         __begin(), __end() {
             _copy_init(start, end);
     }
+# ifndef AMI_STL_STRICT_MODE
     template <class other_type>
     deque(const other_type &other) noexcept :
         __begin(), __end() {
         _copy_init(other.begin(), other.end());
     }
+# endif
     deque(const std::initializer_list<value_type> &i_list) noexcept :
         __begin(), __end() {
         _copy_init((pointer)i_list.begin(), (pointer)i_list.end());
@@ -282,6 +284,7 @@ public:
         this->__destroy_all();
         this->__dealloc_all();
     }
+# ifndef AMI_STL_STRICT_MODE
     template <class other_type>
     deque<T>& operator=(const other_type& other) noexcept {
         deque<T> temp(other);
@@ -289,6 +292,15 @@ public:
         this->__dealloc_all();
         _copy_init(temp.begin(), temp.end());
     }
+# endif
+
+    deque<T>& operator=(const deque<T>& other) noexcept {
+        deque<T> temp(other);
+        this->__destroy_all();
+        this->__dealloc_all();
+        _copy_init(temp.begin(), temp.end());
+    }
+
     iterator begin() { return __begin; }
     iterator end() { return __end; }
     reference operator[](size_type __n) {
@@ -386,6 +398,12 @@ public:
         } else {
             AMI_std::copy(pos + 1, __end, pos);
             this->pop_back();
+        }
+    }
+    void erase(const iterator &begin, const iterator &end) {
+        size_type deleted_length = end - begin;
+        if (end - __end > __begin - begin) {
+            
         }
     }
 };

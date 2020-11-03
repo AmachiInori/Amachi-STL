@@ -173,9 +173,11 @@ public:
     vector(const std::initializer_list<value_type> &i_list) noexcept : 
         vector((pointer)i_list.begin(), (pointer)i_list.end()) {}
 
+# ifndef AMI_STL_STRICT_MODE
     template <class other>
     vector(const other& _other) noexcept :
         vector(_other.begin(), _other.end()) {}
+# endif
 
     /**
      * Destructor of vector
@@ -185,6 +187,7 @@ public:
         __dealloc();
     }
 
+# ifndef AMI_STL_STRICT_MODE
     /**
      * Standard assignment operator
      * @return returns: vector<value_type> & - lvalue of assignment
@@ -192,6 +195,16 @@ public:
     **/
     template <class other>
     vector<value_type>& operator=(const other &other_v) noexcept {
+        vector<value_type> temp(other_v);
+        this->__destroy_element();
+        this->__dealloc();
+        __map_begin = __alloc_and_copy(&*(temp.__map_begin), &*(temp.__map_end));
+        __map_end = __storage_end = __map_begin + (temp.__map_end - temp.__map_begin);
+        return *this;
+    }
+# endif
+
+    vector<value_type>& operator=(const vector<value_type>& other_v) noexcept {
         vector<value_type> temp(other_v);
         this->__destroy_element();
         this->__dealloc();
@@ -507,13 +520,15 @@ public:
     }
 };
 
-template <class T> 
-std::ostream &operator<<(std::ostream& os, vector<T> &_v) {
-    for (_AMI_size_t i = 1; i < _v.size(); i++) {
-        std::cout << _v[i - 1] << ", ";
+# ifndef AMI_STL_STRICT_MODE
+    template <class T> 
+    std::ostream &operator<<(std::ostream& os, vector<T> &_v) {
+        for (_AMI_size_t i = 1; i < _v.size(); i++) {
+            std::cout << _v[i - 1] << ", ";
+        }
+        if (_v.size() > 0) std::cout << _v.back();
+        return os;
     }
-    if (_v.size() > 0) std::cout << _v.back();
-    return os;
-}
+# endif
 
 __ASTL_NAMESPACE_END 

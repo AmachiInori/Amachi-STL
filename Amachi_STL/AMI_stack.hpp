@@ -3,7 +3,7 @@
 
 __ASTL_NAMESPACE_START
 
-template <class T, class container = AMI_std::deque<T>>
+template <class T, class __container = AMI_std::deque<T>>
 class stack {
 public:
     typedef T               value_type;
@@ -11,13 +11,17 @@ public:
     typedef T&              reference;
     typedef _AMI_size_t     size_type;
 protected:
-    container __main_cont;
+    __container __main_cont;
 public:
     stack() noexcept : __main_cont() { }
     stack(size_type length, const value_type& value) noexcept : 
         __main_cont(length, value) { }
     stack(const std::initializer_list<value_type> &i_list) noexcept :
         __main_cont(i_list) { }
+
+# ifndef AMI_STL_STRICT_MODE
+    __container& container() { return __main_cont; }
+# endif
 
     size_type size() const { return __main_cont.size(); }
     size_type empty() const { return __main_cont.empty(); }

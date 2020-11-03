@@ -125,10 +125,11 @@ public:
         __map_begin = __alloc_and_copy(other_v.__map_begin, other_v.__map_end);
         __map_end = __map_begin + (other_v.__map_end - other_v.__map_begin);
     }
-
+# ifndef AMI_STL_STRICT_MODE
     template <class other>
     array(const other& _other) noexcept :
         array(_other.begin(), _other.end()) {}
+# endif
 
     array(const std::initializer_list<value_type> &i_list) noexcept : 
         array((iterator)i_list.begin(), (iterator)i_list.end()) {}
@@ -141,6 +142,7 @@ public:
         __dealloc();
     }
 
+# ifndef AMI_STL_STRICT_MODE
     /**
      * Standard assignment operator
      * returns: array<value_type> & - lvalue of assignment
@@ -148,6 +150,16 @@ public:
     **/
     template <class other>
     array<value_type>& operator=(const other &other_v) {
+        array<value_type> temp(other_v);
+        this->__destroy_element();
+        this->__dealloc();
+        __map_begin = __alloc_and_copy(temp.__map_begin, temp.__map_end);
+        __map_end = __map_begin + (temp.__map_end - temp.__map_begin);
+        return *this;
+    }
+# endif
+
+    array<value_type>& operator=(const array<value_type> &other_v) {
         array<value_type> temp(other_v);
         this->__destroy_element();
         this->__dealloc();

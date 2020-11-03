@@ -15,3 +15,7 @@
 # ifndef __THROW_BAD_ALLOC
 #   define __THROW_BAD_ALLOC 
 # endif
+
+# ifndef __AMI_STL_VER  
+#   define __AMI_STL_VER 1
+# endif
