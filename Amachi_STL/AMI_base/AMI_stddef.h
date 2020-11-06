@@ -1,11 +1,23 @@
 # pragma once
 # include <limits.h>
 # include "AMI_stlconfig.h"
-# ifndef INT_MAX
-#   define INT_MAX 0xffff
+
+# if __IS_DEFAULT_MODE_STR_MODE == true
+    # ifndef AMI_STL_STRICT_MODE
+        # define AMI_STL_STRICT_MODE
+    # endif
 # endif
-# ifndef UINT_MAX
-#   define UINT_MAX 0xffffffff
+
+# ifndef __THROW_OUT_OF_BOUNDS
+#   define __THROW_OUT_OF_BOUNDS throw OUT_OF_BOUND()
+# endif
+
+# ifndef __THROW_BAD_ALLOC
+#   define __THROW_BAD_ALLOC throw BAD_ALLOC()
+# endif
+
+# ifndef __EXPLICIT_SPEC_HEAD
+#   define __EXPLICIT_SPEC_HEAD template <>
 # endif
 
 typedef unsigned int _AMI_size_t;

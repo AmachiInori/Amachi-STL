@@ -1,5 +1,6 @@
 # pragma once
 # include "AMI_stlconfig.h"
+# include "AMI_stddef.h"
 
 __ASTL_NAMESPACE_START
 
@@ -31,6 +32,5 @@ class BAD_ALLOC : public base_exception {
 public:
     BAD_ALLOC() : base_exception("BAD_ALLOC") { }
 };
-
 
 __ASTL_NAMESPACE_END

@@ -8,7 +8,7 @@
 __ASTL_NAMESPACE_START
 
 template <class T, class __container = AMI_std::deque<T>>
-class stack {
+class queue {
 public:
     typedef T               value_type;
     typedef T*              pointer;
@@ -17,27 +17,27 @@ public:
 protected:
     __container __main_cont;
 public:
-    stack() noexcept : __main_cont() { }
-    stack(size_type length, const value_type& value) noexcept : 
+    queue() noexcept : __main_cont() { }
+    queue(size_type length, const value_type& value) noexcept : 
         __main_cont(length, value) { }
-    stack(const std::initializer_list<value_type> &i_list) noexcept :
+    queue(const std::initializer_list<value_type> &i_list) noexcept :
         __main_cont(i_list) { }
-    stack<T>& operator=(const stack<T> &other) {
+    queue<T>& operator=(const queue<T> &other) {
         __main_cont = other.__main_cont;
         return *this;
     }
 
 # ifndef AMI_STL_STRICT_MODE 
     template <class inner_cont>
-    stack<T>& operator=(const inner_cont &other) {
+    queue<T>& operator=(const inner_cont &other) {
         __main_cont = other;
         return *this;
     }
     template <class inpt_iter>
-    stack(const inpt_iter& begin, const inpt_iter& end) noexcept :
+    queue(const inpt_iter& begin, const inpt_iter& end) noexcept :
         __main_cont(begin, end) { }
     template <class other_cont>
-    stack(const other_cont& other) noexcept :
+    queue(const other_cont& other) noexcept :
         __main_cont(other) { };
 
     __container& container() { return __main_cont; }
@@ -47,18 +47,18 @@ public:
     size_type empty() const { return __main_cont.empty(); }
     size_type capacity() const { return __main_cont.capacity(); }
     size_type max_size() const { return __main_cont.max_size(); }
-    value_type& top() { 
+    value_type& front() { 
     # ifdef AMI_STL_STRICT_MODE
         if (empty()) __THROW_OUT_OF_BOUNDS;
     # endif
-        return __main_cont.back(); 
+        return __main_cont.front(); 
     }
     void push(const value_type& value) { return __main_cont.push_back(value); }
     void pop() { 
     # ifdef AMI_STL_STRICT_MODE
         if (empty()) __THROW_OUT_OF_BOUNDS;
     # endif
-        return __main_cont.pop_back();
+        return __main_cont.pop_front();
     }
     
 # ifndef AMI_STL_STRICT_MODE 

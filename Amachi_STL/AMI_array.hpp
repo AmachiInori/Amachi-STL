@@ -283,4 +283,16 @@ public:
     }
 };
 
+# ifndef AMI_STL_STRICT_MODE
+    template <class T> 
+    std::ostream &operator<<(std::ostream& os, array<T> &_v) {
+        for (typename array<T>::iterator i = _v.begin(); i < _v.end() - 1; i++) {
+            std::cout << *i << ", ";
+        }
+        if (_v.size() > 0) std::cout << _v.back();
+        return os;
+    }
+# endif
+
+
 __ASTL_NAMESPACE_END 

@@ -6,10 +6,6 @@
 #   include <iostream>
 # endif
 
-# ifndef __THROW_OUT_OF_BOUNDS
-#   define __THROW_OUT_OF_BOUNDS throw OUT_OF_BOUND()
-# endif
-
 __ASTL_NAMESPACE_START
 
 template <class T, class alloc, _AMI_size_t _bufsize>
@@ -457,7 +453,7 @@ public:
     template <class T> 
     std::ostream &operator<<(std::ostream& os, deque<T> &_v) {
         for (typename deque<T>::iterator i = _v.begin(); i < _v.end() - 1; i++) {
-            std::cout << _v[i - 1] << ", ";
+            std::cout << *i << ", ";
         }
         if (_v.size() > 0) std::cout << _v.back();
         return os;

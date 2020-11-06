@@ -1,5 +1,5 @@
 # pragma once
-# include "AMI_stlconfig.h"
+# include "AMI_stddef.h"
 
 __ASTL_NAMESPACE_START
 

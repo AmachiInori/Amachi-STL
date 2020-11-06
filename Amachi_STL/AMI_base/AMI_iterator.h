@@ -23,28 +23,34 @@ public:
 - 通用迭代器函数 
 distance函数描述两个迭代器的距离
  ***************************************/
-template <class __input_iterator>
-inline typename __iterator_traits<__input_iterator>::difference_type
-__distance(__input_iterator begin, __input_iterator end 
-        ,  __ittag_input_iterator) {
-    typedef typename __iterator_traits<__input_iterator>::difference_type distance;
-    distance res = 0;
-    while (begin != end) res++, begin++;
-    return res;
-}
+template <class __iterator>
+class __dist {
+private:
+    static inline typename __iterator_traits<__iterator>::difference_type
+    __distance(__iterator begin, __iterator end 
+            ,  __ittag_input_iterator) {
+        typedef typename __iterator_traits<__iterator>::difference_type distance;
+        distance res = 0;
+        while (begin != end) res++, begin++;
+        return res;
+    }
 
-template <class __random_iterator>
-inline typename __iterator_traits<__random_iterator>::difference_type
-__distance(__random_iterator begin, __random_iterator end
-        ,  __ittag_random_iterator) {
-    return end - begin;
-}
+    static inline typename __iterator_traits<__iterator>::difference_type
+    __distance(__iterator begin, __iterator end
+            ,  __ittag_random_iterator) {
+        return end - begin;
+    }
+public:
+    template <class iterator>
+    friend typename __iterator_traits<iterator>::difference_type
+        distance(iterator begin, iterator end);
+};
 
 template <class iterator>
 inline typename __iterator_traits<iterator>::difference_type
 distance(iterator begin, iterator end) {
     typedef typename __iterator_traits<iterator>::iterator_category category;
-    return __distance(begin, end, category());
+    return __dist<iterator>::__distance(begin, end, category());
 }
 
 /***************************************
