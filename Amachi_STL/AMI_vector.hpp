@@ -112,6 +112,7 @@ public:
         __map_end = __storage_end = __map_begin + length;
     }
 
+# ifndef AMI_STL_STRICT_MODE
     /** 
      * Constructor of vector with two iterator to copy all the elements between __begin and __end 
      * @return no return 
@@ -124,7 +125,19 @@ public:
         __map_begin = __alloc_and_copy(&*__begin, &*__end);
         __map_end = __storage_end = __map_begin + __length;
     }
-
+# else
+    /** 
+     * Constructor of vector with two iterator to copy all the elements between __begin and __end 
+     * @return no return 
+     * @param __begin - iterator - the start point of the copied array
+     * @param __end   - iterator - the end point of the copied array
+    **/
+    vector(iterator __begin, iterator __end) noexcept {
+        size_type __length = __end - __begin;
+        __map_begin = __alloc_and_copy(__begin, __end);
+        __map_end = __storage_end = __map_begin + __length;
+    }
+# endif
     /** 
      * Constructor of vector with a uint length, element uses its copy constructor 
      * @return no return 
@@ -177,6 +190,11 @@ public:
         vector((pointer)i_list.begin(), (pointer)i_list.end()) {}
 
 # ifndef AMI_STL_STRICT_MODE
+    /** 
+     * Constructor of vector with any container type
+     * @return no return 
+     * @param _other - const other& - container with iterator method begin() and end()
+    **/
     template <class other>
     vector(const other& _other) noexcept :
         vector(_other.begin(), _other.end()) {}

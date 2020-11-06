@@ -57,7 +57,7 @@ private:
                            const value_type &value, __false) {
         forward_iterator __start = start;
         try {
-            for (; length > 0; start++, length--) {
+            for (; length > 0; ++start, --length) {
                 construct(&*start, value);
             }
             return start;
@@ -93,7 +93,7 @@ private:
     __uninitialized_copy(input_iterator begin, input_iterator end, forward_iterator target, __false) {
         forward_iterator start = target;
         try {
-            for (; begin != end; begin++, target++) {
+            for (; begin != end; ++begin, ++target) {
                 AMI_std::construct(&*target, *begin);
             }
         }catch (...) {

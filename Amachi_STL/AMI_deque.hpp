@@ -266,11 +266,18 @@ public:
         __begin(), __end() {
         _fill_init(length, value);
     }
+# ifndef AMI_STL_STRICT_MODE
     template <class inpt_iter>
     deque(const inpt_iter& start, const inpt_iter& end) noexcept :
         __begin(), __end() {
             _copy_init(start, end);
     }
+# else 
+    deque(const iterator& start, const iterator& end) noexcept :
+        __begin(), __end() {
+            _copy_init(start, end);
+    }
+# endif
 # ifndef AMI_STL_STRICT_MODE
     template <class other_type>
     deque(const other_type &other) noexcept :

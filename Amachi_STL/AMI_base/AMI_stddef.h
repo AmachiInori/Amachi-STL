@@ -2,6 +2,12 @@
 # include <limits.h>
 # include "AMI_stlconfig.h"
 
+# ifdef AMI_STRICT_MODE_ON
+    # ifndef AMI_STL_STRICT_MODE
+        # define AMI_STL_STRICT_MODE
+    # endif
+# endif
+
 # if __IS_DEFAULT_MODE_STR_MODE == true
     # ifndef AMI_STL_STRICT_MODE
         # define AMI_STL_STRICT_MODE

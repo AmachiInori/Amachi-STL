@@ -61,6 +61,14 @@ Copy constructor.
 
 Copy-construct a copy of `other_v`, each of the elements will be constructed with its copy constructor.
 
+#### `vector(const other& _other)`
+
+广义复制构造函数。仅非严格模式。
+
+调用容器`_other`中的复制构造函数复制其中的全部元素。
+
+需要`other`类型有`begin()`和`end()`方法返回一个迭代器。
+
 #### `vector(const std::initializer_list<value_type> &i_list)`
 
 In orded to fit the `std::initializer_list` class, delegate `vector(iterator __begin, iterator __end)` to construct the vector.
@@ -76,6 +84,15 @@ Standard assignment operation overload.
 Replace this instance with a copy of the target instance, where the array elements are constructed with their copy constructors.
 
 Stability optimization is carried out to adapt to the self assignment situation, so the efficiency may be low.
+
+#### `vector<value_type>& operator=(const other &other_v)`
+
+泛型赋值运算符重载。
+
+将本实例中的全部元素通过复制构造替换为目标容器中的所有元素。
+
+需要`other`类型有`begin()`和`end()`方法返回一个迭代器。
+
 
 **二 类数据结构方法**
 

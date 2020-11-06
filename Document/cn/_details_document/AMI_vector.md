@@ -34,6 +34,8 @@ AMI_std::vector需要一个定义了`value_type* allocate(unsigned int)`和`void dealloc
 
 构造一个vector实例，并将从迭代器`__begin`到`__end`之间的所有元素复制进入其中
 
+在严格模式下的参数只可以是`AMI_vector<T>::iterator`，在非严格模式下可以是重载了`++`和解引用`*`的任意类型。
+
 #### `vector(size_type length, const value_type &value)`
 
 构造函数。
@@ -58,6 +60,14 @@ AMI_std::vector需要一个定义了`value_type* allocate(unsigned int)`和`void dealloc
 
 复制构造`other_v`的副本，其中每一个数组元素均由其复制构造函数构造。
 
+#### `vector(const other& _other)`
+
+广义复制构造函数。仅非严格模式。
+
+调用容器`_other`中的复制构造函数复制其中的全部元素。
+
+需要`other`类型有`begin()`和`end()`方法返回一个迭代器。
+
 #### `vector(const std::initializer_list<value_type> &i_list)`
 
 针对`std::initializer_list`的接口，委托`vector(iterator __begin, iterator __end)`构造实例。
@@ -73,6 +83,14 @@ AMI_std::vector需要一个定义了`value_type* allocate(unsigned int)`和`void dealloc
 将本实例替换为目标实例的副本，其中的数组元素均以其复制构造函数构造。
 
 进行了稳定性优化，适配自我赋值情况，因此效率可能偏低。
+
+#### `vector<value_type>& operator=(const other &other_v)`
+
+泛型赋值运算符重载。
+
+将本实例中的全部元素通过复制构造替换为目标容器中的所有元素。
+
+需要`other`类型有`begin()`和`end()`方法返回一个迭代器。
 
 **二 类数据结构方法**
 
@@ -247,6 +265,8 @@ AMI_std::vector需要一个定义了`value_type* allocate(unsigned int)`和`void dealloc
 ### 类外部方法
 
 #### `std::ostream &operator<<(std::ostream& os, vector<T> &_v)`
+
+严格模式下不允许使用。
 
 顺序输出容器元素，在两个元素之间以`", "`分隔。
 
