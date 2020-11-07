@@ -112,6 +112,15 @@ public:
         __map_end = __storage_end = __map_begin + length;
     }
 
+    vector(vector<value_type>&& __move_ori) noexcept : 
+        __map_begin(__move_ori.__map_begin),
+        __map_end(__move_ori.__map_end),
+        __storage_end(__move_ori.__storage_end) {
+        __move_ori.__map_begin = nullptr;
+        __move_ori.__map_end = nullptr;
+        __move_ori.__storage_end = nullptr;
+    }
+
 # ifndef AMI_STL_STRICT_MODE
     /** 
      * Constructor of vector with two iterator to copy all the elements between __begin and __end 
@@ -226,11 +235,23 @@ public:
 # endif
 
     vector<value_type>& operator=(const vector<value_type>& other_v) noexcept {
-        vector<value_type> temp(other_v);
-        this->__destroy_element();
-        this->__dealloc();
-        __map_begin = __alloc_and_copy(&*(temp.__map_begin), &*(temp.__map_end));
-        __map_end = __storage_end = __map_begin + (temp.__map_end - temp.__map_begin);
+        if (&other_v != this) {
+            this->__destroy_element();
+            this->__dealloc();
+            __map_begin = __alloc_and_copy(&*(other_v.__map_begin), &*(other_v.__map_end));
+            __map_end = __storage_end = __map_begin + (other_v.__map_end - other_v.__map_begin);
+        } 
+        return *this;
+    }
+
+    vector<value_type>& operator=(vector<value_type>&& other_v) noexcept {
+        if (other_v.__map_begin != this->__map_begin) {
+            this->__destroy_element();
+            this->__dealloc();
+            __map_begin = other_v.__map_begin;
+            __map_end = other_v.__map_end;
+            __storage_end = other_v.__storage_end;
+        } 
         return *this;
     }
 

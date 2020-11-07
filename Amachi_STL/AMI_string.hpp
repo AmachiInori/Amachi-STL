@@ -27,6 +27,10 @@ public:
     string(size_type _length, const char* _str) noexcept : vector((char*)_str, (char*)(_str + _length)) { }
     string(const char* _str) noexcept : vector((char*)_str, (char*)_str + strlen(_str)) {}
     string(iterator _begin, iterator _end) noexcept : vector(_begin, _end) { }
+    string(string&& _move_ori) noexcept : vector(_move_ori) { }
+    string(const string& _copy_ori) noexcept : vector(_copy_ori) { }
+    string& operator=(const string&) noexcept = default;
+    string& operator=(string&&) noexcept = default;
     size_type length() const { return vector::size(); }
     string& append(const char &_c) { 
         vector::push_back(_c);

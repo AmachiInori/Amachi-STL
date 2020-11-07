@@ -1,5 +1,6 @@
 # include "../Amachi_STL/AMI_stack.hpp"
 # include "../Amachi_STL/AMI_vector.hpp"
+# include <stack>
 
 int main() {
     AMI_std::vector<int> ori = {1};
