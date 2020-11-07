@@ -80,6 +80,9 @@ public:
         }
         return (*this);
     }
+# ifndef AMI_STL_STRICT_MODE
+    operator bool() { return this->empty(); }
+# endif
 };
 
 std::ostream &operator<<(std::ostream& os, const string &str) {

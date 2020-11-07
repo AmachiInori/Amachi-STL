@@ -281,6 +281,9 @@ public:
         if (size() > 0) std::cout << back();
         std::cout << "\n";
     }
+# ifndef AMI_STL_STRICT_MODE
+    operator bool() { return this->empty(); }
+# endif
 };
 
 # ifndef AMI_STL_STRICT_MODE

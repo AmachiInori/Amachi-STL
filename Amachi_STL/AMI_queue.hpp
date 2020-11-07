@@ -70,6 +70,9 @@ public:
         std::cout << "\n";
     }
 # endif 
+# ifndef AMI_STL_STRICT_MODE
+    operator bool() { return this->empty(); }
+# endif
 };
 
 __ASTL_NAMESPACE_END

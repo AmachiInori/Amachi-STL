@@ -15,6 +15,7 @@ int main() {
     AMI_std::vector<int> d(1,2);
     d = d;
     d = a;
+    if (a) a = a;
     std::vector<int> i = {1,2,3};
     std::vector<int> j = {1,2};
     i = j;
