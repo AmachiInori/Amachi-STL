@@ -1,7 +1,9 @@
 
 /**
+ * This is a Standard C++ Library header.
  * This file is the user oriented part of Amachi STL
  * Open source by MIT by amachi Inori
+ * Copyright (C) 2020-2020 Amachi Inori.
  * 
  * Main header file of dynamic array AMI_std::vector
  * The dynamic array AMI_std::vector is declared and defined in this file with namespace AMI_std
@@ -20,11 +22,12 @@ __ASTL_NAMESPACE_START
 
 /**
  * ordered table container similar to std::vector
+ * The first template parameter refers to the element type, the second template parameter refers to the allocator
  * 
  * compared with std::vector, 
  * this implementation improves the utilization of space by releasing too much free space at any time
  * (So iterators are more likely to fail) Use a relative cursor to store the location
- * some practical methods have been added
+ * Some practical methods have been added
 **/
 template <class T, class alloc = __secondary_allocator> 
 class vector {

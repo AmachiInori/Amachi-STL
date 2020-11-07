@@ -1,3 +1,16 @@
+
+/**
+ * This is a Standard C++ Library header.
+ * This file is the user oriented part of amachi STL
+ * Open source by MIT by amachi Inori
+ * Copyright (C) 2020-2020 Amachi Inori.
+ * 
+ * Main header file of deque
+ * The deque is declared and defined in this file with namespace AMI_std
+ * Some overloaded stream operations are also defined in this file with namespace AMI_std
+**/
+
+
 # pragma once
 # include "AMI_allocate.hpp"
 # include "initializer_list"
@@ -8,6 +21,13 @@
 
 __ASTL_NAMESPACE_START
 
+template <class T, class alloc = __secondary_allocator, int _bufsize = 0>
+class deque;
+
+/**
+ * Deque's iterator.
+ * Please do not create any instance of it directly, create it through deque's class method.
+**/
 template <class T, class alloc, _AMI_size_t _bufsize>
 class __deque_iterator : 
 public __base_iterator <__ittag_random_iterator, T> {
@@ -21,6 +41,7 @@ public:
 
     typedef __deque_iterator<T, alloc, _bufsize> self;
 
+protected: 
     pointer current_element;
     pointer node_begin;
     pointer node_end;
@@ -35,6 +56,9 @@ public:
     static size_type buf_size() {
         return _bufsize != 0 ? _bufsize : (sizeof(T) < 512 ? _AMI_size_t(512 / sizeof(T)) : 1);
     }
+
+public:
+    friend class deque<T>;
     reference& operator*() const {
         return *current_element;
     }
@@ -124,7 +148,7 @@ public:
     pointer data() { return current_element; }
 };
 
-template <class T, class alloc = __secondary_allocator, int _bufsize = 0>
+template <class T, class alloc, int _bufsize>
 class deque {
 public:
     typedef T               value_type;

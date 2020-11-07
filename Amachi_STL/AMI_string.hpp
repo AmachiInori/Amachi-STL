@@ -1,7 +1,9 @@
 
 /**
+ * This is a Standard C++ Library header.
  * This file is the user oriented part of amachi STL
  * Open source by MIT by amachi Inori
+ * Copyright (C) 2020-2020 Amachi Inori.
  * 
  * Main header file of string
  * The string is declared and defined in this file with namespace AMI_std
@@ -20,6 +22,7 @@ inline bool isLowerAlpha(char _c) { return _c >= 'a' && _c <= 'z'; }
 
 /**
  * String class based on full specialized AMI_std::vector
+ * Some practical methods have been added.
 **/
 class string : public vector<char, __secondary_allocator> {
 public:
