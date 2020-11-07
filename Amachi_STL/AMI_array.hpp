@@ -1,11 +1,3 @@
-# pragma once
-# include "AMI_allocate.hpp"
-# include "initializer_list"
-
-# ifndef AMI_STL_STRICT_MODE
-#   include <iostream>
-# endif
-
 
 /**
  * This file is the user oriented part of amachi STL
@@ -14,6 +6,14 @@
  * Main header file of array
  * The array is declared and defined in this file with namespace AMI_std
 **/
+
+# pragma once
+# include "AMI_allocate.hpp"
+# include "initializer_list"
+
+# ifndef AMI_STL_STRICT_MODE
+#   include <iostream>
+# endif
 
 __ASTL_NAMESPACE_START
 

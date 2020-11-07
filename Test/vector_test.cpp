@@ -1,4 +1,4 @@
-
+//# define AMI_STRICT_MODE_ON
 # include <iostream>
 # include <vector>
 # include "../Amachi_STL/AMI_allocate.hpp"
@@ -11,11 +11,8 @@ AMI_std::vector<int> getV() {
 }
 
 int main() {
-    AMI_std::vector<int> a = getV();
+    AMI_std::vector<std::vector<int>> a{{1,2},{2,3}};
     AMI_std::vector<int> d(1,2);
-    d = d;
-    d = a;
-    if (a) a = a;
     std::vector<int> i = {1,2,3};
     std::vector<int> j = {1,2};
     i = j;

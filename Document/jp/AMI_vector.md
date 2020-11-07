@@ -2,37 +2,31 @@
 
 ## AMI_std::vector
 
-### Overview
+### 概要
 
-AMI_std::vector is a dynamic array template. It belongs to a dynamic storage sequential linear table container, which is defined in the file 'AMI_vector', it imitates std::vector.
+AMI_std::vectorはダイナミックな配列のテンプレートで，ダイナミックな格納の順序式のリニアテーブルの容器であり，ファイル`AMI_vector`定義されている。
 
-### External dependence
+### 外部依存
 
-AMI_std::vector needs a memory allocator which has a `value_type* allocate(unsigned int)` and `void deallocate(value_type*, unsigned int)` function as the second template parameter. The default configuration is the `base_allocator` with default template parameter in the including file `AMI_allocate`.
+AMI_std::vectorは`value_type* allocate(unsigned int)`と`void deallocate(value_type*, unsigned int)`定義された空間構成器類が第二パラメータとして必要して，デフォルトでは、ファイルは`AMI_allocate`に定義された`base_allocator`である。
 
-Construction-destruct and object construction methods for continuous uninitialized space which are defined in the including file `AMI_base/AMI_construct.h` and `AMI_base/AMI_uninit.h` are also needed.
+它也需要构造-析构以及针对连续未初始化空间的对象构造方法，这些方法固定在包含文件`AMI_base/AMI_construct.h`和`AMI_base/AMI_uninit.h`中。
 
-Meanwhile, In order to fit the `initializer_list` which is the new features of C++11, access of the method `begin()` and `end()` of the `initializer_list` is also required. Judgment for the version of C++ is not added here, Therefore, please use C++ 11 and above compiler packages and ensure that the `initializer_list` file can be accessed.
+同时，针对C++11之后的`initializer_list`初始化标准，它需要访问`initializer_list`类的`begin()`和`end()`方法。此处未添加针对于C++标准的判断，故请使用C++11及以上的编译器套件并确保`initializer_list`文件可以访问。
 
-### public member method
+### public成员方法
 
-**A. class structure method**
+**一 类实例结构方法**
 
 #### `vector()` 
 
-The default constructor constructs an empty vector instance.
+默认构造函数，构造一个空的vector实例。
 
 #### `vector(size_type length)`
 
-Constructor.
+构造函数。
 
-Construct a vector with a given length, all elements in the instance will use its default constructor to construct, so `value_type` must have a default constructor, otherwise the compilation fails.
-
-#### `vector(iterator __begin, iterator __end)`
-
-Constructor.
-
-Construct a vector with two iterators, all the elements from `__begin` to `__end` will be copied in the new vector.
+构造一个长度为`length`的vector实例，其中的元素均调用其默认构造函数构造，因此`value_type`须拥有默认构造函数，否则编译不通过。
 
 #### `vector(vector<value_type>&& __move_ori)`
 
@@ -40,29 +34,37 @@ Construct a vector with two iterators, all the elements from `__begin` to `__end
 
 直接移动`__move_ori`中的指针成员至新的实例，并将`__move_ori`中的成员设为`nullptr`
 
+#### `vector(iterator __begin, iterator __end)`
+
+构造函数。
+
+构造一个vector实例，并将从迭代器`__begin`到`__end`之间的所有元素复制进入其中
+
+在严格模式下的参数只可以是`AMI_vector<T>::iterator`，在非严格模式下可以是重载了`++`和解引用`*`的任意类型。
+
 #### `vector(size_type length, const value_type &value)`
 
-Constructor.
+构造函数。
 
-Construct a vector with a given length, all elements in the instance will use its copy constructor to construct with the parameter `value`, so `value_type` must have a copy constructor, otherwise the compilation fails.
+构造一个长度为`length`的vector实例，其中的元素均调用其复制构造函数构造，参数为`value`，因此`value_type`须拥有复制构造函数，否则编译不通过。
 
 #### `vector(int length, const value_type &value)`
 
-Constructor.
+构造函数。
 
-Construct a vector with a given length, all elements in the instance will use its copy constructor to construct with the parameter `value`, so `value_type` must have a copy constructor, otherwise the compilation fails.
+构造一个长度为`length`的vector实例，其中的元素均调用其复制构造函数构造，参数为`value`，因此`value_type`须拥有复制构造函数，否则编译不通过。
 
 #### `vector(long length, const value_type &value)`
 
-Constructor.
+构造函数。
 
-Construct a vector with a given length, all elements in the instance will use its copy constructor to construct with the parameter `value`, so `value_type` must have a copy constructor, otherwise the compilation fails.
+构造一个长度为`length`的vector实例，其中的元素均调用其复制构造函数构造，参数为`value`，因此`value_type`须拥有复制构造函数，否则编译不通过。
 
 #### `vector(const vector<value_type> &other_v)`
 
-Copy constructor.
+复制构造函数。
 
-Copy-construct a copy of `other_v`, each of the elements will be constructed with its copy constructor.
+复制构造`other_v`的副本，其中每一个数组元素均由其复制构造函数构造。
 
 #### `vector(const other& _other)`
 
@@ -74,19 +76,19 @@ Copy-construct a copy of `other_v`, each of the elements will be constructed wit
 
 #### `vector(const std::initializer_list<value_type> &i_list)`
 
-In orded to fit the `std::initializer_list` class, delegate `vector(iterator __begin, iterator __end)` to construct the vector.
+针对`std::initializer_list`的接口，委托`vector(iterator __begin, iterator __end)`构造实例。
 
 #### `~vector()`
 
-Standard destructor. Destructs all array elements with the default destructor and frees up memory.
+标准析构函数。以默认析构函数析构所有的数组元素并释放空间。
 
 #### `vector<value_type>& operator=(const vector<value_type> &other_v)`
 
-Standard assignment operation overload.
+标准赋值运算重载。
 
-Replace this instance with a copy of the target instance, where the array elements are constructed with their copy constructors.
+将本实例替换为目标实例的副本，其中的数组元素均以其复制构造函数构造。
 
-Stability optimization is carried out to adapt to the self assignment situation, so the efficiency may be low.
+进行了稳定性优化，适配自我赋值情况，因此效率可能偏低。
 
 #### `vector<value_type>& operator=(const other &other_v)`
 
@@ -101,7 +103,6 @@ Stability optimization is carried out to adapt to the self assignment situation,
 移动赋值运算符。
 
 直接移动`other_v`中的指针成员至本实例，并将`other_v`中的成员设为`nullptr`
-
 
 **二 类数据结构方法**
 
@@ -255,7 +256,7 @@ Stability optimization is carried out to adapt to the self assignment situation,
 
 从右到左顺序查找第一个与`_target`不相等的实例，并返回实例指针，线性时间复杂度。
 
-需调用类实例的重载相等运算符`!=`
+需调用类实例的重载相异运算符`!=`
 
 #### `void print (const char* _div = ", ")`
 
@@ -276,6 +277,8 @@ Stability optimization is carried out to adapt to the self assignment situation,
 ### 类外部方法
 
 #### `std::ostream &operator<<(std::ostream& os, vector<T> &_v)`
+
+严格模式下不允许使用。
 
 顺序输出容器元素，在两个元素之间以`", "`分隔。
 

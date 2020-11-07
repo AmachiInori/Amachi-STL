@@ -1,6 +1,3 @@
-# pragma once
-# include "AMI_vector.hpp"
-# include <iostream>
 
 /**
  * This file is the user oriented part of amachi STL
@@ -10,6 +7,11 @@
  * The string is declared and defined in this file with namespace AMI_std
  * Some overloaded stream operations are also defined in this file with namespace AMI_std
 **/
+
+
+# pragma once
+# include "AMI_vector.hpp"
+# include <iostream>
 
 __ASTL_NAMESPACE_START
 

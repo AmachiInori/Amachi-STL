@@ -1,7 +1,3 @@
-# pragma once
-# include "AMI_base/AMI_alloc.h"
-# include "AMI_base/AMI_uninit.h"
-# include "AMI_base/AMI_construct.h"
 
 /**
  * This file is the user oriented part of amachi STL
@@ -9,6 +5,11 @@
  * 
  * Main header file of allocator
 **/
+
+# pragma once
+# include "AMI_base/AMI_alloc.h"
+# include "AMI_base/AMI_uninit.h"
+# include "AMI_base/AMI_construct.h"
 
 __ASTL_NAMESPACE_START
 

@@ -28,6 +28,12 @@ AMI_std::vector需要一个定义了`value_type* allocate(unsigned int)`和`void dealloc
 
 构造一个长度为`length`的vector实例，其中的元素均调用其默认构造函数构造，因此`value_type`须拥有默认构造函数，否则编译不通过。
 
+#### `vector(vector<value_type>&& __move_ori)`
+
+移动构造函数。
+
+直接移动`__move_ori`中的指针成员至新的实例，并将`__move_ori`中的成员设为`nullptr`
+
 #### `vector(iterator __begin, iterator __end)`
 
 构造函数。
@@ -91,6 +97,12 @@ AMI_std::vector需要一个定义了`value_type* allocate(unsigned int)`和`void dealloc
 将本实例中的全部元素通过复制构造替换为目标容器中的所有元素。
 
 需要`other`类型有`begin()`和`end()`方法返回一个迭代器。
+
+#### `vector<value_type>& operator=(vector<value_type>&& other_v)`
+
+移动赋值运算符。
+
+直接移动`other_v`中的指针成员至本实例，并将`other_v`中的成员设为`nullptr`
 
 **二 类数据结构方法**
 

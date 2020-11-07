@@ -1,3 +1,13 @@
+
+/**
+ * This file is the user oriented part of Amachi STL
+ * Open source by MIT by amachi Inori
+ * 
+ * Main header file of dynamic array AMI_std::vector
+ * The dynamic array AMI_std::vector is declared and defined in this file with namespace AMI_std
+ * Some overloaded stream operations are also defined in this file with namespace AMI_std
+**/
+
 # pragma once
 # include "AMI_allocate.hpp"
 # include "initializer_list"
@@ -5,15 +15,6 @@
 # ifndef AMI_STL_STRICT_MODE
 #   include <iostream>
 # endif
-
-/**
- * This file is the user oriented part of amachi STL
- * Open source by MIT by amachi Inori
- * 
- * Main header file of dynamic array AMI_std::vector
- * The dynamic array AMI_std::vector is declared and defined in this file with namespace AMI_std
- * Some overloaded stream operations are also defined in this file with namespace AMI_std
-**/
 
 __ASTL_NAMESPACE_START
 
@@ -112,6 +113,11 @@ public:
         __map_end = __storage_end = __map_begin + length;
     }
 
+    /**
+     * Move constructor
+     * @return no return 
+     * @param __move_ori - rvalue of a vector<value_type>
+    **/
     vector(vector<value_type>&& __move_ori) noexcept : 
         __map_begin(__move_ori.__map_begin),
         __map_end(__move_ori.__map_end),
@@ -219,7 +225,7 @@ public:
 
 # ifndef AMI_STL_STRICT_MODE
     /**
-     * Standard assignment operator
+     * Generics assignment operator
      * @return returns: vector<value_type> & - lvalue of assignment
      * @param other_v - const other & - the right value of assignment  
     **/
@@ -234,6 +240,11 @@ public:
     }
 # endif
 
+    /**
+     * Standard assignment operator
+     * @return returns: vector<value_type> & - lvalue of assignment
+     * @param other_v - const vector<value_type>& - the right value of assignment  
+    **/
     vector<value_type>& operator=(const vector<value_type>& other_v) noexcept {
         if (&other_v != this) {
             this->__destroy_element();
@@ -244,6 +255,11 @@ public:
         return *this;
     }
 
+    /**
+     * Move assignment operator
+     * @return returns: vector<value_type> & - lvalue of assignment
+     * @param other_v - const vector<value_type>&& - the rvalue of assignment  
+    **/
     vector<value_type>& operator=(vector<value_type>&& other_v) noexcept {
         if (other_v.__map_begin != this->__map_begin) {
             this->__destroy_element();
@@ -251,6 +267,9 @@ public:
             __map_begin = other_v.__map_begin;
             __map_end = other_v.__map_end;
             __storage_end = other_v.__storage_end;
+            other_v.__map_begin = nullptr;
+            other_v.__map_end = nullptr;
+            other_v.__storage_end = nullptr;
         } 
         return *this;
     }
@@ -577,6 +596,12 @@ public:
     }
 
 # ifndef AMI_STL_STRICT_MODE
+
+    /**
+     * Forced transfer to bool
+     * @return returns: bool - Is the vector empty
+     * 
+    **/
     operator bool() { return this->empty(); }
 # endif
 };
