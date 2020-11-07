@@ -17,7 +17,7 @@
 
 __ASTL_NAMESPACE_START
 
-template <class T, class alloc = __secondary_allocator> 
+template <class T, _AMI_size_t length, class alloc = __secondary_allocator> 
 class array {
 public:
     typedef T               value_type;
@@ -34,18 +34,12 @@ protected:
     iterator __map_begin = 0;
     iterator __map_end = 0;
     
-    iterator __alloc_and_init(size_type length, const value_type &value) {
+    iterator __alloc_and_init(const value_type &value) {
         iterator res = __array_alloc::allocate(length);
         AMI_std::uninitialized_fill_n(res, length, value);
         return res;
     }
 
-    template <class inpt_iter>
-    iterator __alloc_and_copy(inpt_iter begin, inpt_iter end) {
-        iterator res = __array_alloc::allocate(end - begin);
-        AMI_std::uninitialized_copy(begin, end, res);
-        return res;
-    }
     void __destroy_element() {
         destroy(__map_begin, __map_end);
         __map_end = __map_begin;
@@ -59,65 +53,22 @@ protected:
     }
 public:
     /** 
-     * Default constructor of array
+     * Constructor of array with length, element uses its default constructor 
      * no return 
      * 
     **/
-    array() noexcept = default;
-
-    /** 
-     * Constructor of array with a uint length, element uses its default constructor 
-     * no return 
-     * length - unsigned int - the length of the array
-    **/
-    explicit array(size_type length) noexcept {
+    explicit array() noexcept {
         __map_begin = __alloc_and_init(length, size_type());
         __map_end = __map_begin + length;
     }
 
     /** 
-     * Constructor of array with two iterator to copy all the elements between __begin and __end 
+     * Constructor of array with length, element uses its copy constructor 
      * no return 
-     * __begin - iterator - the start point of the copied array
-     * __end   - iterator - the end point of the copied array
-    **/
-    template <class inpt_iter>
-    array(inpt_iter __begin, inpt_iter __end) noexcept {
-        size_type __length = __end - __begin;
-        __map_begin = __alloc_and_copy(__begin, __end);
-        __map_end = __map_begin + __length;
-    }
-
-    /** 
-     * Constructor of array with a uint length, element uses its copy constructor 
-     * no return 
-     * length - unsigned int        - the length of the array
      * value  - const value_type &  - the copied element
     **/
-    array(size_type length, const value_type &value) noexcept {
-        __map_begin = __alloc_and_init(length, value);
-        __map_end = __map_begin + length;
-    }
-
-    /** 
-     * Constructor of array with a int length, element uses its copy constructor 
-     * no return 
-     * length - int                 - the length of the array
-     * value  - const value_type &  - the copied element
-    **/
-    array(int length, const value_type &value) noexcept {
-        __map_begin = __alloc_and_init(size_type(length), value);
-        __map_end = __map_begin + length;
-    }
-
-    /** 
-     * Constructor of array with a long int length, element uses its copy constructor 
-     * no return 
-     * length - long int            - the length of the array
-     * value  - const value_type &  - the copied element
-    **/
-    array(long length, const value_type &value) noexcept {
-        __map_begin = __alloc_and_init(size_type(length), value);
+    array(const value_type &value) noexcept {
+        __map_begin = __alloc_and_init(value);
         __map_end = __map_begin + length;
     }
 
@@ -126,18 +77,10 @@ public:
      * no return 
      * other_v - const array<value_type> & - the copied array
     **/
-    array(const array<value_type> &other_v) noexcept {
+    array(const array<value_type, length> &other_v) noexcept {
         __map_begin = __alloc_and_copy(other_v.__map_begin, other_v.__map_end);
         __map_end = __map_begin + (other_v.__map_end - other_v.__map_begin);
     }
-# ifndef AMI_STL_STRICT_MODE
-    template <class other>
-    array(const other& _other) noexcept :
-        array(_other.begin(), _other.end()) {}
-# endif
-
-    array(const std::initializer_list<value_type> &i_list) noexcept : 
-        array((iterator)i_list.begin(), (iterator)i_list.end()) {}
 
     /**
      * Destructor of array
@@ -147,25 +90,8 @@ public:
         __dealloc();
     }
 
-# ifndef AMI_STL_STRICT_MODE
-    /**
-     * Standard assignment operator
-     * returns: array<value_type> & - lvalue of assignment
-     * other_v - const other & - the right value of assignment  
-    **/
-    template <class other>
-    array<value_type>& operator=(const other &other_v) {
-        array<value_type> temp(other_v);
-        this->__destroy_element();
-        this->__dealloc();
-        __map_begin = __alloc_and_copy(temp.__map_begin, temp.__map_end);
-        __map_end = __map_begin + (temp.__map_end - temp.__map_begin);
-        return *this;
-    }
-# endif
-
-    array<value_type>& operator=(const array<value_type> &other_v) {
-        array<value_type> temp(other_v);
+    array<value_type, length>& operator=(const array<value_type, length> &other_v) {
+        array<value_type, length> temp(other_v);
         this->__destroy_element();
         this->__dealloc();
         __map_begin = __alloc_and_copy(temp.__map_begin, temp.__map_end);
@@ -180,6 +106,12 @@ public:
     **/
     value_type& at(size_type loca) {
         return (*this)[loca];
+    }
+
+    void fill(const value_type& value) {
+        for (iterator i = __map_begin; i != __map_end; i++) {
+            *i = value;
+        }
     }
 
     /**
@@ -287,9 +219,9 @@ public:
 };
 
 # ifndef AMI_STL_STRICT_MODE
-    template <class T> 
-    std::ostream &operator<<(std::ostream& os, array<T> &_v) {
-        for (typename array<T>::iterator i = _v.begin(); i < _v.end() - 1; i++) {
+    template <class T, _AMI_size_t len> 
+    std::ostream &operator<<(std::ostream& os, array<T, len> &_v) {
+        for (typename array<T, len>::iterator i = _v.begin(); i < _v.end() - 1; i++) {
             std::cout << *i << ", ";
         }
         if (_v.size() > 0) std::cout << _v.back();
