@@ -5,7 +5,7 @@
 int main() {
     AMI_std::string test("abcdef");
     AMI_std::string test2(test);
-    test = std::move(test2.reverse());
+    test2 = test;
     std::cout << test.reverse() << "\n";
     return 0;
 }

@@ -22,7 +22,8 @@ __ASTL_NAMESPACE_START
 
 /**
  * ordered table container similar to std::vector
- * The first template parameter refers to the element type, the second template parameter refers to the allocator
+ * The first template parameter T refers to the element type
+ * The second template parameter alloc refers to the allocator
  * 
  * compared with std::vector, 
  * this implementation improves the utilization of space by releasing too much free space at any time
@@ -261,7 +262,7 @@ public:
     /**
      * Move assignment operator
      * @return returns: vector<value_type> & - lvalue of assignment
-     * @param other_v - const vector<value_type>&& - the rvalue of assignment  
+     * @param other_v - vector<value_type>&& - the rvalue of assignment  
     **/
     vector<value_type>& operator=(vector<value_type>&& other_v) noexcept {
         if (other_v.__map_begin != this->__map_begin) {

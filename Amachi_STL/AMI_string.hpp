@@ -10,7 +10,6 @@
  * Some overloaded stream operations are also defined in this file with namespace AMI_std
 **/
 
-
 # pragma once
 # include "AMI_vector.hpp"
 # include <iostream>
@@ -22,21 +21,104 @@ inline bool isLowerAlpha(char _c) { return _c >= 'a' && _c <= 'z'; }
 
 /**
  * String class based on full specialized AMI_std::vector
- * Some practical methods have been added.
+ * Some practical methods have been added
+ * 
+ * Inherited from specialized vector
 **/
 class string : public vector<char, __secondary_allocator> {
 public:
+    /** 
+     * Default constructor of string
+     * @return no return 
+     * 
+    **/
     string() noexcept = default;
+
+    /** 
+     * Constructor of string with a uint length, chars uses its default constructor 
+     * Pass-call function
+     * @return no return 
+     * @param length - unsigned int - the length of the array
+    **/
     explicit string(size_type _length) noexcept : vector(_length) { }
-    string(size_type _length, const char &_c) noexcept : vector(_length, _c) { }
-    string(size_type _length, const char* _str) noexcept : vector((char*)_str, (char*)(_str + _length)) { }
+
+    /** 
+     * Constructor of string with a uint length, all the element were set to _c
+     * Pass-call function
+     * @return no return 
+     * @param _length - unsigned int    - the length of the array
+     * @param _c      - const char      - the copied element
+    **/
+    string(size_type _length, const char _c) noexcept : vector(_length, _c) { }
+
+    /** 
+     * Constructor of string with a const char*
+     * Pass-call function
+     * @return no return 
+     * @param _str - const char* - the origin char array
+    **/
     string(const char* _str) noexcept : vector((char*)_str, (char*)_str + strlen(_str)) {}
+
+    /** 
+     * Constructor of string with two iterator to copy all the chars between _begin and _end 
+     * Pass-call function
+     * @return no return 
+     * @param _begin - char* - the start point of the copied string
+     * @param _end   - char* - the end point of the copied string
+    **/
     string(iterator _begin, iterator _end) noexcept : vector(_begin, _end) { }
+
+    /**
+     * Move constructor
+     * Pass-call function
+     * @return no return 
+     * @param __move_ori - rvalue of a string
+    **/
     string(string&& _move_ori) noexcept : vector(_move_ori) { }
+
+    /** 
+     * Copy constructor of string
+     * Pass-call function
+     * @return no return 
+     * @param _copy_ori - const string& - the copied string
+    **/
     string(const string& _copy_ori) noexcept : vector(_copy_ori) { }
+
+    /**
+     * Destructor of string
+    **/
+    ~string() noexcept = default;
+
+    /**
+     * Standard assignment operator
+     * Pass-call function
+     * @return returns: string& - lvalue of assignment
+     * @param const string& - the right value of assignment  
+    **/
     string& operator=(const string&) noexcept = default;
+
+    /**
+     * Move assignment operator
+     * Pass-call function
+     * @return returns: string& - lvalue of assignment
+     * @param string&& - the rvalue of assignment
+    **/
     string& operator=(string&&) noexcept = default;
+
+    /**
+     * Gets the occupied size of string
+     * Pass-call function
+     * @return returns: unsigned int - occupied size of string
+     * 
+    **/
     size_type length() const { return vector::size(); }
+
+    /**
+     * Gets the occupied size of string
+     * Pass-call function
+     * @return returns: unsigned int - occupied size of string
+     * @param _c - const char &
+    **/
     string& append(const char &_c) { 
         vector::push_back(_c);
         return (*this);
@@ -49,10 +131,6 @@ public:
         return (*this);
     }
     char* c_str() const { return vector::__map_begin; }
-    string& reverse() { 
-        vector::reverse();
-        return (*this);
-    }
     string substr(iterator _begin, iterator _end) { return string(_begin, _end); }
     string substr(size_type _begin, size_type _end) { return substr(_begin + vector::begin(), _end + vector::begin()); }
     bool compare(const string &_str) {

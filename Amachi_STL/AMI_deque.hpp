@@ -10,10 +10,9 @@
  * Some overloaded stream operations are also defined in this file with namespace AMI_std
 **/
 
-
 # pragma once
 # include "AMI_allocate.hpp"
-# include "initializer_list"
+# include <initializer_list>
 
 # ifndef AMI_STL_STRICT_MODE
 #   include <iostream>
@@ -26,7 +25,12 @@ class deque;
 
 /**
  * Deque's iterator.
- * Please do not create any instance of it directly, create it through deque's class method.
+ * Provide random access.
+ * Please do not create any instance of it directly, create it only through deque's class method.
+ * The first template parameter T refers to the element type
+ * The second template parameter alloc refers to the allocator
+ * The third template parameter _bufsize refers to the size of node buffer (bytes, 8 bits)
+ * - if use 0 as the buffer size, the deque will use its default setting.
 **/
 template <class T, class alloc, _AMI_size_t _bufsize>
 class __deque_iterator : 
@@ -59,6 +63,7 @@ protected:
 
 public:
     friend class deque<T>;
+    __deque_iterator() = default;
     reference& operator*() const {
         return *current_element;
     }
@@ -148,7 +153,14 @@ public:
     pointer data() { return current_element; }
 };
 
-template <class T, class alloc, int _bufsize>
+/**
+ * STL implementation of double ended queue.
+ * The first template parameter T refers to the element type
+ * The second template parameter alloc refers to the allocator
+ * The third template parameter _bufsize refers to the size of node buffer (bytes, 8 bits)
+ * - if use 0 as the buffer size, the deque will use its default setting.
+**/
+template <class T, class alloc, _AMI_size_t _bufsize>
 class deque {
 public:
     typedef T               value_type;
@@ -472,7 +484,7 @@ public:
         }
     }
     void print(const char* _div = ", ") {
-        for (iterator i = begin(); i < end() - 1; i++) {
+        for (iterator i = begin(); i < end() - 1; ++i) {
             std::cout << *i << _div;
         }
         if (size() > 0) std::cout << back();

@@ -63,7 +63,7 @@ public:
     
 # ifndef AMI_STL_STRICT_MODE 
     void print(const char* _div = ", ") {
-        for (typename __container::iterator i = __main_cont.begin(); i < __main_cont.end() - 1; i++) {
+        for (typename __container::iterator i = __main_cont.begin(); i != __main_cont.end() - 1; i++) {
             std::cout << *i << _div;
         }
         if (size() > 0) std::cout << __main_cont.back();
