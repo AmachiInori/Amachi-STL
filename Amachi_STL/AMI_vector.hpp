@@ -135,11 +135,11 @@ public:
     /** 
      * Constructor of vector with two iterator to copy all the elements between __begin and __end 
      * @return no return 
-     * @param __begin - iterator - the start point of the copied array
-     * @param __end   - iterator - the end point of the copied array
+     * @param __begin - const iterator& - the start point of the copied container
+     * @param __end   - const iterator& - the end point of the copied container
     **/
     template <class inpt_iter>
-    vector(inpt_iter __begin, inpt_iter __end) noexcept {
+    vector(const inpt_iter &__begin, const inpt_iter &__end) noexcept {
         size_type __length = __end - __begin;
         __map_begin = __alloc_and_copy(&*__begin, &*__end);
         __map_end = __storage_end = __map_begin + __length;

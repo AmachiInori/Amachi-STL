@@ -297,18 +297,42 @@ protected:
         __end.current_element = __end.node_begin + (element_num % buf_size());
     }
 public:
+    /** 
+     * Default constructor of vector
+     * @return no return 
+     * 
+    **/
     deque() noexcept : deque(0, value_type()) {}
+
+    /** 
+     * Constructor of deque with a uint length, element uses its copy constructor 
+     * @return no return 
+     * @param length - unsigned int        - the length of the deque
+     * @param value  - const value_type &  - the copied element
+    **/
     deque(size_type length, const value_type& value) noexcept :
         __begin(), __end() {
         _fill_init(length, value);
     }
 # ifndef AMI_STL_STRICT_MODE
+    /** 
+     * Constructor of vector with two iterator to copy all the elements between __begin and __end 
+     * @return no return 
+     * @param __begin - const inpt_iter& - the start point of the copied container
+     * @param __end   - const inpt_iter& - the end point of the copied container
+    **/
     template <class inpt_iter>
     deque(const inpt_iter& start, const inpt_iter& end) noexcept :
         __begin(), __end() {
             _copy_init(start, end);
     }
 # else 
+    /** 
+     * Constructor of vector with two iterator to copy all the elements between __begin and __end 
+     * @return no return 
+     * @param __begin - const inpt_iter& - the start point of the copied container
+     * @param __end   - const inpt_iter& - the end point of the copied container
+    **/
     deque(const iterator& start, const iterator& end) noexcept :
         __begin(), __end() {
             _copy_init(start, end);

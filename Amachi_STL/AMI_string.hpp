@@ -114,15 +114,21 @@ public:
     size_type length() const { return vector::size(); }
 
     /**
-     * Gets the occupied size of string
+     * Add a character to the end of the string
      * Pass-call function
-     * @return returns: unsigned int - occupied size of string
-     * @param _c - const char &
+     * @return returns: string& - *this
+     * @param _c - const char & - the apped char
     **/
     string& append(const char &_c) { 
         vector::push_back(_c);
         return (*this);
     }
+
+    /**
+     * Add a string to the end of the string
+     * @return returns: string& - *this
+     * @param _c - const string & - the apped string
+    **/
     string& append(const string &_c) { 
         while (this->size() + _c.size() > this->capacity()) 
             this->__enlarge();
@@ -130,9 +136,35 @@ public:
         this->__map_end += _c.size();
         return (*this);
     }
+
+    /**
+     * Return a C-type string
+     * @return returns: char* - the c type "string"
+     * 
+    **/
     char* c_str() const { return vector::__map_begin; }
+
+    /**
+     * Return a sub string of this string
+     * @return returns: string - the sub stirng
+     * @param _begin    - iterator - the begin of the sub string
+     * @param _end      - iterator - the end of the sub stirng
+    **/
     string substr(iterator _begin, iterator _end) { return string(_begin, _end); }
+
+    /**
+     * Return a sub string of this string
+     * @return returns: string - the sub stirng
+     * @param _begin    - uint   - the begin location of the sub string
+     * @param _end      - uint   - the end location of the sub stirng
+    **/
     string substr(size_type _begin, size_type _end) { return substr(_begin + vector::begin(), _end + vector::begin()); }
+
+    /**
+     * Return if the two stirngs are equel
+     * @return returns: bool - if the two stirngs are equel
+     * @param _str      - const string & - the compared string
+    **/
     bool compare(const string &_str) {
         if (this->length() != _str.length()) return false;
         for (size_type i = 0; i < this->length(); i++) {
@@ -140,23 +172,54 @@ public:
         }
         return true;
     }
+
+    /**
+     * Return if the two stirngs are equel
+     * Pass-call function
+     * @return returns: bool - if the two stirngs are equel
+     * @param other_str      - const string & - the compared string
+    **/
     bool operator==(const string &other_str) {
         return compare(other_str);
     }
+
+    /**
+     * Add a string to a copy of this string
+     * @return returns: string
+     * @param _c - const string & - the apped string
+    **/
     string operator+(const string &_c) const { //加法运算符绝对不返回引用
         string temp = *this;
         temp += _c;
         return temp;
     }
+
+    /**
+     * Add a string to the end of the string
+     * @return returns: string& - *this
+     * @param _c - const string & - the apped string
+    **/
     string& operator+=(const string &_c) {
         return (append(_c));
     }
+
+    /**
+     * Set all of the upper alpha to lower
+     * @return returns: string& - *this
+     * 
+    **/
     string& to_lower() {
         for (auto &c : *this) {
             if (isUpperAlpha(c)) c = c + 'a' - 'A';
         }
         return (*this);
     }
+
+    /**
+     * Set all of the lower alpha to upper
+     * @return returns: string& - *this
+     * 
+    **/
     string& to_upper() {
         for (auto &c : *this) {
             if (isLowerAlpha(c)) c = c + 'A' - 'a';
