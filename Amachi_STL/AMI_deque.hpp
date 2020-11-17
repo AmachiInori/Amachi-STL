@@ -20,7 +20,7 @@
 
 __ASTL_NAMESPACE_START
 
-template <class T, class alloc = __secondary_allocator, int _bufsize = 0>
+template <class T, class alloc = __secondary_allocator, _AMI_size_t _bufsize = 0>
 class deque;
 
 /**
@@ -530,4 +530,4 @@ public:
     }
 # endif
 
-__ASTL_NAMESPACE_END 
+__ASTL_NAMESPACE_END
