@@ -351,7 +351,7 @@ public:
      * @return returns: value_type & - the element according to the subscript
      * @param loca - unsigned int - the subscript 
     **/
-    reference operator[](size_type loca) {
+    reference operator[](size_type loca) const {
     # ifdef AMI_STL_STRICT_MODE
         if (loca >= size()) __THROW_OUT_OF_BOUNDS;
     # endif
