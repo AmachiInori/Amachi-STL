@@ -384,8 +384,8 @@ public:
     size_type size() const noexcept { return (__end - __begin); }
     size_type max_size() const noexcept { return -1; }
     bool empty() const noexcept { return __end == __begin; }
-    reference front() { return *__begin; }
-    reference back() { 
+    reference front() const noexcept { return *__begin; }
+    reference back() const noexcept { 
         iterator _temp = end();
         --_temp;
         return *_temp;
