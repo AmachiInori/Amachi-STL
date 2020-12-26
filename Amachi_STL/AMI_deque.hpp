@@ -374,7 +374,7 @@ public:
 
     iterator begin() const noexcept { return __begin; }
     iterator end() const noexcept { return __end; }
-    reference operator[](size_type __n) {
+    reference operator[](size_type __n) const {
     # ifdef AMI_STL_STRICT_MODE
         if (__n >= size()) __THROW_OUT_OF_BOUNDS;
     # endif
@@ -384,8 +384,8 @@ public:
     size_type size() const noexcept { return (__end - __begin); }
     size_type max_size() const noexcept { return -1; }
     bool empty() const noexcept { return __end == __begin; }
-    reference front() { return *__begin; }
-    reference back() { 
+    reference front() const noexcept { return *__begin; }
+    reference back() const noexcept { 
         iterator _temp = end();
         --_temp;
         return *_temp;

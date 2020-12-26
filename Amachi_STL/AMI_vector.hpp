@@ -341,21 +341,21 @@ public:
      * @return returns: value_type& - the last element of vector
      * 
     **/
-    reference front() { return *begin(); }
+    reference front() const noexcept { return *begin(); }
 
     /**
      * Gets the last element of vector
      * @return returns: value_type& - the last element of vector
      * 
     **/
-    reference back() { return *(end() - 1); }
+    reference back() const noexcept { return *(end() - 1); }
 
     /**
      * Gets the reference of the element according to the subscript
      * @return returns: value_type & - the element according to the subscript
      * @param loca - unsigned int - the subscript 
     **/
-    reference operator[](size_type loca) {
+    reference operator[](size_type loca) const {
     # ifdef AMI_STL_STRICT_MODE
         if (loca >= size()) __THROW_OUT_OF_BOUNDS;
     # endif
