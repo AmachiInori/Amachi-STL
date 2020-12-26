@@ -161,6 +161,6 @@ char *__secondary_allocator::__memory_pool_start = 0;
 char *__secondary_allocator::__memory_pool_end = 0;
 _AMI_size_t __secondary_allocator::__used_heap_size = 0;
 typename __secondary_allocator::list_node * volatile
-__secondary_allocator::__main_table[chain_number] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+__secondary_allocator::__main_table[chain_number] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 __ASTL_NAMESPACE_END 

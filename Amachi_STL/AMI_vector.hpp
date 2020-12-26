@@ -76,9 +76,11 @@ protected:
         size_type used_length = size_type(__map_end - __map_begin);
         size_type new_size;
         if (old_size == 0) new_size = 1;
+        else if (old_size <= 16) new_size = old_size * 2.5;
         else if (old_size <= 512) new_size = old_size * 2;
-        else if (old_size <= 4096) new_size = old_size * 1.7;
-        else if (old_size <= 65536) new_size = old_size * 1.4;
+        else if (old_size <= 4096) new_size = old_size * 1.75;
+        else if (old_size <= 65536) new_size = old_size * 1.5;
+        else if (old_size <= 262144l) new_size = old_size * 1.25;
         else new_size = old_size * 1.1;
         iterator new_begin = __vector_alloc::allocate(new_size);
         AMI_std::uninitialized_copy(__map_begin, __map_end, new_begin);
@@ -278,6 +280,8 @@ public:
         return *this;
     }
 
+    void auto_shrink() { return this->__shrink(); }
+    
     /**
      * Gets the reference of the element according to the subscript
      * @return returns: value_type & - the element according to the subscript
@@ -382,9 +386,11 @@ public:
     # endif
         AMI_std::destroy(__map_end);
         __map_end--;
+    # ifdef AMI_STL_MEM_SAVING
         if (capacity() > size() * 4) {
             this->__shrink();
         }
+    # endif
     }
 
     /**
@@ -401,9 +407,11 @@ public:
             AMI_std::copy(pos + 1, end(), pos);
         }
         AMI_std::destroy(__map_end--);
+    # ifdef AMI_STL_MEM_SAVING
         if (capacity() > size() * 4) {
             this->__shrink();
         }
+    # endif
         return __map_begin + relative;
     }
 
@@ -431,9 +439,11 @@ public:
         AMI_std::copy(_end, end(), _begin);
         AMI_std::destroy(end() - dele_length, end());
         __map_end -= dele_length;
+    # ifdef AMI_STL_MEM_SAVING
         while (capacity() > size() * 4) {
             this->__shrink();
         }
+    # endif
         return __map_begin + relative;
     }
 

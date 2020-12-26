@@ -9,6 +9,13 @@
 #   endif
 # endif
 
+# ifdef AMI_MEM_SAVING_MODE_ON
+#   ifndef AMI_STL_MEM_SAVING
+#       pragma message("Amachi STL: memory-saving mode on")
+#       define AMI_STL_MEM_SAVING
+#   endif
+# endif
+
 # if __IS_DEFAULT_MODE_STR_MODE == true
 #   ifndef AMI_STL_STRICT_MODE
 #       define AMI_STL_STRICT_MODE
