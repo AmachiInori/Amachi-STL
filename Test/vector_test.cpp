@@ -1,4 +1,5 @@
 //# define AMI_STRICT_MODE_ON
+# define AMI_MEM_SAVING_MODE_ON
 # include <iostream>
 # include <vector>
 # include "../Amachi_STL/AMI_allocate.hpp"

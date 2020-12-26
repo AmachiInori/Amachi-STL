@@ -4,16 +4,17 @@
 using namespace AMI_std;
 
 int main() {
-    vector<int> testV = {2,5,7,1,2,4,8,3,1,5};
-    build_heap(testV.begin(), testV.end(), less<int>());
-    pop_heap(testV.begin(), testV.end(), less<int>());
+    vector<int> testV = {12,13,15,6,3,8,9,10,7};
+    build_heap(testV.begin(), testV.end());
     testV.print();
-    pop_heap(testV.begin(), testV.end() - 1, less<int>());
+    pop_heap(testV.begin(), testV.end());
     testV.print();
-    pop_heap(testV.begin(), testV.end() - 2, less<int>());
+    pop_heap(testV.begin(), testV.end() - 1);
     testV.print();
-    pop_heap(testV.begin(), testV.end() - 3, less<int>());
+    pop_heap(testV.begin(), testV.end() - 2);
     testV.print();
-    pop_heap(testV.begin(), testV.end() - 4, less<int>());
+    pop_heap(testV.begin(), testV.end() - 3);
+    testV.print();
+    pop_heap(testV.begin(), testV.end() - 4);
     testV.print();
 }
