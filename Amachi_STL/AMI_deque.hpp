@@ -351,16 +351,33 @@ public:
     }
     deque(const AMI_std::deque<value_type> &other) noexcept :
         deque(other.begin(), other.end()) {}
+    deque(AMI_std::deque<value_type> &&other) noexcept {
+        this->__begin = other.__begin;
+        this->__end = other.__end;
+        this->__map_size = other.__map_size;
+        this->__map = other.__map;
+
+        other.__begin.current_node = nullptr;
+        other.__begin.current_element = nullptr;
+        other.__begin.node_end = nullptr;
+        other.__begin.node_begin = nullptr;
+        other.__end.current_node = nullptr;
+        other.__end.current_element = nullptr;
+        other.__end.node_begin = nullptr;
+        other.__end.node_end = nullptr;
+        other.__map_size = 0;
+        other.__map = nullptr;
+    }
     ~deque() noexcept {
         this->__destroy_all();
-        this->__dealloc_all();
+        if (__map) this->__dealloc_all();
     }
 # ifndef AMI_STL_STRICT_MODE
     template <class other_type>
     deque<T>& operator=(const other_type& other) noexcept {
         deque<T> temp(other);
         this->__destroy_all();
-        this->__dealloc_all();
+        if (__map) this->__dealloc_all();
         _copy_init(temp.begin(), temp.end());
     }
 # endif
@@ -368,7 +385,7 @@ public:
     deque<T>& operator=(const deque<T>& other) noexcept {
         deque<T> temp(other);
         this->__destroy_all();
-        this->__dealloc_all();
+        if (__map) this->__dealloc_all();
         _copy_init(temp.begin(), temp.end());
     }
 
